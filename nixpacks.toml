@@ -1,2 +1,6 @@
+[phases.build]
+cmds = ["npm run build"]
+cacheDirectories = []
+
 [start]
 cmd = "npx serve -s dist -l 3001"
