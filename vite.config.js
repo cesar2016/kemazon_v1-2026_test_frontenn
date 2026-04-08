@@ -7,6 +7,10 @@ import path from 'path'
 export default defineConfig({
   base: './',
   plugins: [react()],
+  build: {
+    outDir: '.',
+    emptyOutDir: true,
+  },
   css: {
     postcss: {
       plugins: [tailwindcss(), autoprefixer()],
