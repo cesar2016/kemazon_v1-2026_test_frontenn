@@ -4,3 +4,13 @@ cacheDirectories = []
 
 [start]
 cmd = "npx serve -s dist -l 3001"
+
+[staticAssets]
+Caddyfile = '''
+:{$PORT:3000} {
+    root * ../app/dist
+    encode gzip
+    file_server
+    try_files {path} /index.html
+}
+'''
