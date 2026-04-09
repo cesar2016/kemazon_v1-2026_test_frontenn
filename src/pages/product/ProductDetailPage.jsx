@@ -104,7 +104,7 @@ export function ProductDetailPage() {
       const increment = calculateMinIncrement(auctionData.current_price);
       setBidAmount(String(Number(auctionData.current_price) + increment));
     }
-  }, [data]);
+  }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const placeBidMutation = useMutation({
     mutationFn: ({ auctionId, amount }) => auctionService.placeBid(auctionId, amount),
