@@ -270,9 +270,8 @@ export function ProductDetailPage() {
             <span className="text-gray-900">{product.name}</span>
           </nav>
 
-<div className="grid lg:grid-cols-[120px_1fr_400px] gap-6 lg:gap-8">
-            {/* Miniaturas - primer columna en desktop */}
-            <div className="flex flex-row lg:flex-col gap-2 overflow-x-auto pb-2 lg:pb-0 lg:overflow-visible order-1">
+          <div className="grid lg:grid-cols-[120px_1fr_400px] gap-8">
+            <div className="flex flex-row lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0">
               {images.map((image, index) => (
                 <button
                   key={index}
@@ -287,46 +286,6 @@ export function ProductDetailPage() {
                   <img src={image} alt="" className="w-full h-full object-cover" />
                 </button>
               ))}
-            </div>
-
-            {/* Imagen principal - segunda columna en desktop */}
-            <div className="order-2">
-              <div
-                className="relative aspect-square rounded-2xl overflow-hidden bg-gray-100 cursor-zoom-in group"
-                onClick={() => setIsModalOpen(true)}
-              >
-                <img
-                  src={images[selectedImage]}
-                  alt={product.name}
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                />
-
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
-                  <div className="opacity-0 group-hover:opacity-100 transition-opacity bg-white/90 rounded-full p-3">
-                    <ZoomIn className="w-6 h-6 text-gray-700" />
-                  </div>
-                </div>
-
-                {product.type === 'auction' && (
-                  <Badge variant="warning" className="absolute top-4 left-4">
-                    <Gavel className="w-4 h-4 mr-1" /> Subasta
-                  </Badge>
-                )}
-
-                {images.length > 1 && (
-                  <div className="absolute bottom-4 right-4 bg-black/60 text-white text-sm px-3 py-1 rounded-full">
-                    {selectedImage + 1}/{images.length}
-                  </div>
-                )}
-              </div>
-
-              {/* Descripción - tercera columna en desktop */}
-              <div className="mt-6 bg-gray-50 rounded-2xl p-4 lg:p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">Descripción del producto</h2>
-                <div className="prose prose-sm max-w-none">
-                  <p className="text-gray-600 whitespace-pre-wrap text-sm lg:text-base">{product.description || 'Sin descripción disponible'}</p>
-                </div>
-              </div>
             </div>
 
             <div>
