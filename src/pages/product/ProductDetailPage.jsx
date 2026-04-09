@@ -260,18 +260,18 @@ export function ProductDetailPage() {
 
   return (
     <Layout>
-      <div className="bg-white py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="flex items-center space-x-2 text-sm text-gray-500 mb-6">
+      <div className="bg-white py-4 sm:py-8">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 sm:px-6 lg:px-8">
+          <nav className="flex items-center space-x-2 text-xs sm:text-sm text-gray-500 mb-4 sm:mb-6">
             <Link to="/" className="hover:text-primary-600">Inicio</Link>
             <span>/</span>
             <Link to="/products" className="hover:text-primary-600">Productos</Link>
             <span>/</span>
-            <span className="text-gray-900">{product.name}</span>
+            <span className="text-gray-900 truncate max-w-[150px] sm:max-w-none">{product.name}</span>
           </nav>
 
-          <div className="grid lg:grid-cols-[120px_1fr_400px] gap-8">
-            <div className="flex flex-row lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0">
+          <div className="grid lg:grid-cols-[120px_1fr_400px] gap-4 sm:gap-6 lg:gap-8">
+            <div className="flex flex-row lg:flex-col gap-2 overflow-x-auto pb-2 lg:overflow-visible lg:pb-0">
               {images.map((image, index) => (
                 <button
                   key={index}
@@ -280,7 +280,7 @@ export function ProductDetailPage() {
                     setSelectedImage(index);
                     setIsModalOpen(true);
                   }}
-                  className={`w-16 h-16 lg:w-full lg:aspect-square rounded-xl overflow-hidden border-2 transition-all flex-shrink-0 ${selectedImage === index ? 'border-primary-500 ring-2 ring-primary-200' : 'border-gray-200 hover:border-gray-300'
+                  className={`w-14 h-14 sm:w-16 sm:h-16 lg:w-full lg:aspect-square rounded-xl overflow-hidden border-2 transition-all flex-shrink-0 ${selectedImage === index ? 'border-primary-500 ring-2 ring-primary-200' : 'border-gray-200 hover:border-gray-300'
                     }`}
                 >
                   <img src={image} alt="" className="w-full h-full object-cover" />
@@ -290,7 +290,7 @@ export function ProductDetailPage() {
 
             <div>
               <div
-                className="relative rounded-2xl overflow-hidden bg-gray-100 cursor-zoom-in group h-64 sm:h-80 md:h-96 lg:h-[500px]"
+                className="relative rounded-xl sm:rounded-2xl overflow-hidden bg-gray-100 cursor-zoom-in group h-56 sm:h-72 md:h-80 lg:h-[500px]"
                 onClick={() => setIsModalOpen(true)}
               >
                 <img
