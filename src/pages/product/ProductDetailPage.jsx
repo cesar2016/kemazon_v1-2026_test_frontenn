@@ -270,8 +270,8 @@ export function ProductDetailPage() {
             <span className="text-gray-900">{product.name}</span>
           </nav>
 
-          <div className="grid lg:grid-cols-[120px_1fr] gap-8">
-            <div className="flex flex-row lg:flex-col gap-2 overflow-x-auto pb-2 lg:overflow-visible">
+          <div className="grid lg:grid-cols-[120px_1fr_400px] gap-8">
+            <div className="flex flex-row lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0">
               {images.map((image, index) => (
                 <button
                   key={index}
@@ -317,15 +317,14 @@ export function ProductDetailPage() {
                   </div>
                 )}
               </div>
-            </div>
-          </div>
 
-          <div className="mt-8 bg-gray-50 rounded-2xl p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Descripción del producto</h2>
-            <div className="prose prose-sm max-w-none">
-              <p className="text-gray-600 whitespace-pre-wrap">{product.description || 'Sin descripción disponible'}</p>
+              <div className="mt-6 bg-gray-50 rounded-2xl p-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">Descripción del producto</h2>
+                <div className="prose prose-sm max-w-none">
+                  <p className="text-gray-600 whitespace-pre-wrap">{product.description || 'Sin descripción disponible'}</p>
+                </div>
+              </div>
             </div>
-          </div>
 
             <div className="space-y-6">
               <div>

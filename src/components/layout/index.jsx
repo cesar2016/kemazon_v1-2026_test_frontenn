@@ -48,7 +48,7 @@ export function Header() {
     }
   };
 
-return (
+  return (
     <header className="sticky top-4 z-40 mx-auto w-[95%] max-w-7xl glass rounded-2xl">
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
