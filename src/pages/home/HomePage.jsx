@@ -110,12 +110,18 @@ export function HomePage() {
     queryFn: () => productService.getAll({ per_page: 8 }),
   });
 
+  const { data: auctionsData } = useQuery({
+    queryKey: ['auctions', 'home'],
+    queryFn: () => auctionService.getAll({ per_page: 4 }),
+  });
+
   const { data: categoriesData } = useQuery({
     queryKey: ['categories'],
     queryFn: () => categoryService.getAll(),
   });
 
   const products = productsData?.data?.data || [];
+  const auctions = auctionsData?.data?.data || [];
   const categories = categoriesData?.data?.categories || [];
 
   return (
@@ -161,6 +167,55 @@ export function HomePage() {
           )}
         </div>
       </div>
+
+      {auctions.length > 0 && (
+        <div className="py-12 bg-gray-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-3xl font-bold text-gray-900">Subastas Activas</h2>
+              <Link to="/auctions" className="text-primary-600 hover:text-primary-700 font-medium">
+                Ver todas <ArrowRight className="w-4 h-4 ml-1 inline" />
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {auctions.slice(0, 4).map((auction) => (
+                <Link
+                  key={auction.id}
+                  to={`/auctions/${auction.id}`}
+                  className="group bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-2xl hover:shadow-amber-900/10 transition-all duration-500 flex flex-col h-full"
+                >
+                  <div className="relative aspect-square overflow-hidden bg-gray-50">
+                    <img
+                      src={auction.product?.thumbnail || 'https://via.placeholder.com/400x400?text=Subasta'}
+                      alt={auction.product?.name}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    />
+                    <Badge variant="warning" className="absolute top-3 left-3 bg-amber-100 text-amber-700 border-amber-200">
+                      <Gavel className="w-3 h-3 mr-1" /> Subasta
+                    </Badge>
+                  </div>
+                  <div className="p-6">
+                    <h3 className="text-sm font-semibold text-gray-900 mb-2 line-clamp-2">
+                      {auction.product?.name}
+                    </h3>
+                    <div className="mt-auto">
+                      <span className="text-xs text-gray-400 font-bold">Precio actual:</span>
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-lg font-black text-gray-900">
+                          {formatPrice(auction.current_price)}
+                        </span>
+                      </div>
+                      <div className="mt-2 pt-2 border-t border-gray-50">
+                        <AuctionTimer endDate={auction.ends_at} size="small" />
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       <section className="py-16 bg-gradient-to-r from-primary-600 to-secondary-600 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
