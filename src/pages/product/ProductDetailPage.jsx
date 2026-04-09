@@ -270,25 +270,25 @@ export function ProductDetailPage() {
             <span className="text-gray-900">{product.name}</span>
           </nav>
 
-          <div className="grid lg:grid-cols-[120px_1fr_400px] gap-8">
-            <div className="flex flex-row lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0">
-              {images.map((image, index) => (
-                <button
-                  key={index}
-                  onMouseEnter={() => setSelectedImage(index)}
-                  onClick={() => {
-                    setSelectedImage(index);
-                    setIsModalOpen(true);
-                  }}
-                  className={`w-16 h-16 lg:w-full lg:aspect-square rounded-xl overflow-hidden border-2 transition-all flex-shrink-0 ${selectedImage === index ? 'border-primary-500 ring-2 ring-primary-200' : 'border-gray-200 hover:border-gray-300'
+          <div className="grid lg:grid-cols-2 gap-8">
+            <div className="space-y-6">
+              <div className="flex gap-2 overflow-x-auto pb-2">
+                {images.map((image, index) => (
+                  <button
+                    key={index}
+                    onMouseEnter={() => setSelectedImage(index)}
+                    onClick={() => {
+                      setSelectedImage(index);
+                      setIsModalOpen(true);
+                    }}
+                    className={`w-16 h-16 rounded-xl overflow-hidden border-2 transition-all flex-shrink-0 ${selectedImage === index ? 'border-primary-500 ring-2 ring-primary-200' : 'border-gray-200 hover:border-gray-300'
                     }`}
-                >
-                  <img src={image} alt="" className="w-full h-full object-cover" />
-                </button>
-              ))}
-            </div>
+                  >
+                    <img src={image} alt="" className="w-full h-full object-cover" />
+                  </button>
+                ))}
+              </div>
 
-            <div>
               <div
                 className="relative aspect-square rounded-2xl overflow-hidden bg-gray-100 cursor-zoom-in group"
                 onClick={() => setIsModalOpen(true)}
@@ -317,8 +317,10 @@ export function ProductDetailPage() {
                   </div>
                 )}
               </div>
+            </div>
 
-              <div className="mt-6 bg-gray-50 rounded-2xl p-6">
+            <div>
+              <div className="mt-6 lg:mt-0 bg-gray-50 rounded-2xl p-6">
                 <h2 className="text-lg font-semibold text-gray-900 mb-4">Descripción del producto</h2>
                 <div className="prose prose-sm max-w-none">
                   <p className="text-gray-600 whitespace-pre-wrap">{product.description || 'Sin descripción disponible'}</p>

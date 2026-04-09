@@ -49,8 +49,8 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-4 z-40 mx-auto w-[95%] max-w-7xl glass rounded-2xl">
-      <div className="px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-50 w-full glass">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center space-x-2 group">
             <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
