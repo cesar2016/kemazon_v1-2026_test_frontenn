@@ -109,20 +109,30 @@ export function AuctionsPage() {
             <Button 
               variant={filter === 'active' ? 'primary' : 'outline'}
               onClick={() => setFilter('active')}
+              className={filter === 'active' ? 'bg-primary-600 border-primary-600' : ''}
             >
               Activas
             </Button>
             <Button 
               variant={filter === 'ending' ? 'primary' : 'outline'}
               onClick={() => setFilter('ending')}
+              className={filter === 'ending' ? 'bg-primary-600 border-primary-600' : ''}
             >
               Finalizando Pronto
             </Button>
             <Button 
               variant={filter === 'new' ? 'primary' : 'outline'}
               onClick={() => setFilter('new')}
+              className={filter === 'new' ? 'bg-primary-600 border-primary-600' : ''}
             >
               Nuevas
+            </Button>
+            <Button 
+              variant={filter === 'finished' ? 'primary' : 'outline'}
+              onClick={() => setFilter('finished')}
+              className={filter === 'finished' ? 'bg-primary-600 border-primary-600' : ''}
+            >
+              Finalizadas
             </Button>
           </div>
         </div>
