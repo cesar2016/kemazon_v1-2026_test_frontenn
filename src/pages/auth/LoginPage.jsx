@@ -29,21 +29,21 @@ export function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-white to-secondary-50 py-12 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-white to-secondary-50 py-8 px-3 sm:px-4">
       <div className="max-w-md w-full">
-        <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center space-x-2 mb-6">
-            <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-secondary-600 rounded-xl flex items-center justify-center">
-              <span className="text-white text-xl font-bold">K</span>
+        <div className="text-center mb-6 sm:mb-8">
+          <Link to="/" className="inline-flex items-center space-x-2 mb-4 sm:mb-6">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-primary-500 to-secondary-600 rounded-xl flex items-center justify-center">
+              <span className="text-white text-lg sm:text-xl font-bold">K</span>
             </div>
-            <span className="text-3xl font-bold gradient-text">KEMAZON</span>
+            <span className="text-2xl sm:text-3xl font-bold gradient-text">KEMAZON</span>
           </Link>
-          <h1 className="text-2xl font-bold text-gray-900">Iniciar Sesión</h1>
-          <p className="text-gray-500 mt-2">Accede a tu cuenta para comprar y vender</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Iniciar Sesión</h1>
+          <p className="text-gray-500 mt-1 sm:mt-2 text-sm">Accede a tu cuenta para comprar y vender</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-xl p-8">
-          <div className="space-y-5">
+        <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-xl p-5 sm:p-8">
+          <div className="space-y-4 sm:space-y-5">
             <div className="relative">
               <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <Input
@@ -98,7 +98,7 @@ export function LoginPage() {
           </div>
         </form>
 
-        <p className="mt-8 text-center text-sm text-gray-500">
+        <p className="mt-6 sm:mt-8 text-center text-xs sm:text-sm text-gray-500">
           Demo: vendedor@kemazon.ar / password
         </p>
       </div>

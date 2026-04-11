@@ -41,21 +41,21 @@ export function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-white to-secondary-50 py-12 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-white to-secondary-50 py-8 px-3 sm:px-4">
       <div className="max-w-md w-full">
-        <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center space-x-2 mb-6">
-            <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-secondary-600 rounded-xl flex items-center justify-center">
-              <span className="text-white text-xl font-bold">K</span>
+        <div className="text-center mb-6 sm:mb-8">
+          <Link to="/" className="inline-flex items-center space-x-2 mb-4 sm:mb-6">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-primary-500 to-secondary-600 rounded-xl flex items-center justify-center">
+              <span className="text-white text-lg sm:text-xl font-bold">K</span>
             </div>
-            <span className="text-3xl font-bold gradient-text">KEMAZON</span>
+            <span className="text-2xl sm:text-3xl font-bold gradient-text">KEMAZON</span>
           </Link>
-          <h1 className="text-2xl font-bold text-gray-900">Crear Cuenta</h1>
-          <p className="text-gray-500 mt-2">Únete a la comunidad de KEMAZON</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Crear Cuenta</h1>
+          <p className="text-gray-500 mt-1 sm:mt-2 text-sm">Únete a la comunidad de KEMAZON</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-xl p-8">
-          <div className="space-y-5">
+        <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-xl p-5 sm:p-8">
+          <div className="space-y-4 sm:space-y-5">
             <div className="relative">
               <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <Input
@@ -127,12 +127,12 @@ export function RegisterPage() {
             </p>
 
             <div className="flex items-start">
-              <input type="checkbox" className="rounded border-gray-300 text-primary-600 focus:ring-primary-500 mt-1" required />
-              <span className="ml-2 text-sm text-gray-600">
+              <input type="checkbox" className="rounded border-gray-300 text-primary-600 focus:ring-primary-500 mt-1 flex-shrink-0" required />
+              <span className="ml-2 text-xs sm:text-sm text-gray-600">
                 Acepto los{' '}
-                <Link to="/terms" className="text-primary-600 hover:underline">Términos y Condiciones</Link>
+                <Link to="/terms" className="text-primary-600 hover:underline">Términos</Link>
                 {' '}y la{' '}
-                <Link to="/privacy" className="text-primary-600 hover:underline">Política de Privacidad</Link>
+                <Link to="/privacy" className="text-primary-600 hover:underline">Política</Link>
               </span>
             </div>
 

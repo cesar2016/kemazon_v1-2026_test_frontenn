@@ -47,11 +47,11 @@ export function CartPage() {
                     Tu Carrito <span className="text-primary-600">({items.length})</span>
                 </h1>
 
-                <div className="grid lg:grid-cols-3 gap-8">
-                    <div className="lg:col-span-2 space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div className="md:col-span-2 space-y-4">
                         {items.map((item) => (
-                            <Card key={item.id} className="p-4 flex gap-4 items-center">
-                                <div className="w-24 h-24 bg-gray-100 rounded-xl overflow-hidden flex-shrink-0 border border-gray-100">
+                            <Card key={item.id} className="p-3 sm:p-4 flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-center">
+                                <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gray-100 rounded-xl overflow-hidden flex-shrink-0 border border-gray-100">
                                     {item.product?.thumbnail || item.product?.images?.[0] ? (
                                         <img
                                             src={item.product?.thumbnail || item.product?.images?.[0]}
@@ -68,10 +68,10 @@ export function CartPage() {
                                     )}
                                 </div>
 
-                                <div className="flex-1 min-w-0">
-                                    <div className="flex justify-between items-start">
-                                        <div>
-                                            <h3 className="font-black text-gray-900 truncate">
+                                <div className="flex-1 min-w-0 w-full">
+                                    <div className="flex justify-between items-start gap-2">
+                                        <div className="min-w-0">
+                                            <h3 className="font-black text-gray-900 text-sm sm:text-base truncate">
                                                 <Link to={`/products/${item.product?.slug}`} className="hover:text-primary-600 transition-colors">
                                                     {item.product?.name}
                                                 </Link>
@@ -82,14 +82,14 @@ export function CartPage() {
                                         </div>
                                         <button
                                             onClick={() => removeItem(item.id)}
-                                            className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
+                                            className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all flex-shrink-0"
                                         >
                                             <Trash2 className="w-4 h-4" />
                                         </button>
                                     </div>
 
-                                    <div className="flex items-center justify-between mt-4">
-                                        <div className="flex items-center gap-4">
+                                    <div className="flex items-center justify-between mt-3 sm:mt-4 gap-2">
+                                        <div className="flex items-center gap-2 sm:gap-4">
                                             {item.type === 'direct' ? (
                                                 <div className="flex items-center border border-gray-200 rounded-lg bg-gray-50 p-1">
                                                     <button
@@ -107,14 +107,14 @@ export function CartPage() {
                                                     </button>
                                                 </div>
                                             ) : (
-                                                <span className="text-sm font-black text-gray-700 bg-amber-100 text-amber-800 px-3 py-1 rounded-full border border-amber-200">
+                                                <span className="text-xs sm:text-sm font-black text-gray-700 bg-amber-100 text-amber-800 px-2 sm:px-3 py-1 rounded-full border border-amber-200">
                                                     Cantidad: 1
                                                 </span>
                                             )}
                                         </div>
 
                                         <div className="text-right">
-                                            <PriceFormatter price={item.price * item.quantity} className="text-lg font-black text-gray-900" />
+                                            <PriceFormatter price={item.price * item.quantity} className="text-base sm:text-lg font-black text-gray-900" />
                                             {item.quantity > 1 && (
                                                 <p className="text-[10px] text-gray-400 font-bold uppercase">
                                                     <PriceFormatter price={item.price} /> c/u
@@ -127,8 +127,8 @@ export function CartPage() {
                         ))}
                     </div>
 
-                    <div className="lg:col-span-1">
-                        <Card className="p-6 sticky top-24 border-2 border-primary-100 bg-primary-50/10">
+                    <div className="md:col-span-1">
+                        <Card className="p-4 sm:p-6 sticky top-24 border-2 border-primary-100 bg-primary-50/10">
                             <h2 className="text-sm font-black text-gray-900 uppercase tracking-widest mb-6 px-1 border-l-4 border-primary-500">
                                 Resumen de Compra
                             </h2>

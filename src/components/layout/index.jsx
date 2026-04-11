@@ -49,16 +49,16 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-4 z-40 mx-auto w-[95%] max-w-7xl glass rounded-2xl">
+    <header className="sticky top-4 z-40 mx-auto w-[92%] sm:w-[95%] max-w-7xl glass rounded-2xl">
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <Link to="/" className="flex items-center space-x-2 group">
-            <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-              <Gavel className="w-6 h-6 text-white" />
+          <Link to="/" className="flex items-center space-x-1.5 sm:space-x-2 group">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg sm:rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+              <Gavel className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
             <div className="flex flex-col">
-              <span className="text-xl font-black text-gray-900 leading-none tracking-tighter">KEMAZON<span className="text-primary-600">.ar</span></span>
-              <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Marketplace AI</span>
+              <span className="text-lg sm:text-xl font-black text-gray-900 leading-none tracking-tighter">KEMAZON<span className="text-primary-600">.ar</span></span>
+              <span className="text-[8px] sm:text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-0.5 sm:mt-1">Marketplace AI</span>
             </div>
           </Link>
 
@@ -178,7 +178,7 @@ export function Header() {
                 </div>
               </>
             ) : (
-              <div className="flex items-center gap-2">
+              <div className="hidden sm:flex items-center gap-2">
                 <Link to="/login" className="px-4 py-2 text-sm font-bold text-gray-600 hover:text-primary-600 transition-colors">
                   Ingresar
                 </Link>
@@ -212,12 +212,22 @@ export function Header() {
               </div>
             </form>
             <nav className="flex flex-col space-y-2">
-              <Link to="/auctions" className="px-4 py-3 rounded-xl font-bold text-gray-700 hover:bg-primary-50 hover:text-primary-600 transition-colors">
-                Remates
+              <Link to="/auctions" className="px-4 py-3 rounded-xl font-bold text-gray-700 hover:bg-primary-50 hover:text-primary-600 transition-colors flex items-center gap-3">
+                <Gavel className="w-4 h-4" /> Remates
               </Link>
-              <Link to="/products" className="px-4 py-3 rounded-xl font-bold text-gray-700 hover:bg-primary-50 hover:text-primary-600 transition-colors">
-                Tienda
+              <Link to="/products" className="px-4 py-3 rounded-xl font-bold text-gray-700 hover:bg-primary-50 hover:text-primary-600 transition-colors flex items-center gap-3">
+                <Store className="w-4 h-4" /> Tienda
               </Link>
+              {!isAuthenticated && (
+                <div className="grid grid-cols-2 gap-2 p-2 mt-4">
+                  <Link to="/login" className="px-4 py-3 text-center rounded-xl font-bold text-gray-600 bg-gray-50 hover:bg-gray-100 transition-colors">
+                    Ingresar
+                  </Link>
+                  <Link to="/register" className="px-4 py-3 text-center rounded-xl font-bold text-white bg-primary-600 hover:bg-primary-700 transition-colors">
+                    Registrarse
+                  </Link>
+                </div>
+              )}
             </nav>
           </div>
         )}
@@ -231,8 +241,8 @@ export function Footer() {
     <footer className="bg-gray-950 text-gray-500 py-16 mt-20 relative overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-600 via-secondary-500 to-tertiary-600" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12">
           <div className="space-y-6">
             <Link to="/" className="flex items-center space-x-2">
               <div className="w-10 h-10 bg-primary-600 rounded-xl flex items-center justify-center rotate-3">
@@ -263,9 +273,9 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-white/5 mt-12 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-bold uppercase tracking-widest">
-          <p>&copy; {new Date().getFullYear()} KEMAZON.ar. HECHO CON PASIÓN EN ARGENTINA.</p>
-          <div className="flex gap-6">
+        <div className="border-t border-white/5 mt-10 sm:mt-12 pt-6 sm:pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-bold uppercase tracking-widest">
+          <p className="text-center md:text-left">&copy; {new Date().getFullYear()} KEMAZON.ar. HECHO CON PASIÓN EN ARGENTINA.</p>
+          <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
             <span className="text-secondary-500">MERCADOPAGO</span>
             <span className="text-primary-500">CORREO ARGENTINO</span>
             <span className="text-tertiary-500">SEGURIDAD SSL</span>
@@ -285,7 +295,7 @@ export function Layout({ children }) {
       <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] bg-tertiary-500/5 rounded-full blur-[150px] pointer-events-none -z-10" />
 
       <Header />
-      <main className="flex-1 mt-8">{children}</main>
+      <main className="flex-1 mt-8 px-0">{children}</main>
       <Footer />
     </div>
   );

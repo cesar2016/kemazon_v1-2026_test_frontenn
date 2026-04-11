@@ -114,7 +114,7 @@ export function ProductsPage() {
 
           <div className="flex flex-col lg:flex-row gap-6">
             <aside className={`lg:w-64 flex-shrink-0 ${showFilters ? 'block' : 'hidden lg:block'}`}>
-              <div className="bg-white rounded-2xl p-6 shadow-sm">
+              <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-sm">
                 <h3 className="font-semibold text-gray-900 mb-4">Categorías</h3>
                 <div className="space-y-2">
                   <button
@@ -179,10 +179,10 @@ export function ProductsPage() {
                 <div className="flex items-center space-x-4">
                   <button
                     onClick={() => setShowFilters(!showFilters)}
-                    className="lg:hidden flex items-center space-x-2 px-4 py-2 bg-white rounded-xl shadow-sm"
+                    className="lg:hidden flex items-center space-x-2 px-4 py-2 bg-white rounded-xl shadow-sm border border-gray-200"
                   >
                     <Filter className="w-5 h-5" />
-                    <span>Filtros</span>
+                    <span className="text-sm font-medium">Filtros</span>
                   </button>
                   <span className="text-gray-500">
                     {pagination?.total || 0} productos
@@ -227,21 +227,23 @@ export function ProductsPage() {
                   </div>
 
                   {pagination?.last_page > 1 && (
-                    <div className="flex items-center justify-center space-x-2 mt-8">
+                    <div className="flex items-center justify-center flex-wrap gap-2 mt-8">
                       {pagination.current_page > 1 && (
                         <Button
                           variant="outline"
+                          size="sm"
                           onClick={() => updateParams('page', String(pagination.current_page - 1))}
                         >
                           Anterior
                         </Button>
                       )}
-                      <span className="px-4 py-2">
-                        Página {pagination.current_page} de {pagination.last_page}
+                      <span className="px-3 py-2 text-sm">
+                        {pagination.current_page} / {pagination.last_page}
                       </span>
                       {pagination.current_page < pagination.last_page && (
                         <Button
                           variant="outline"
+                          size="sm"
                           onClick={() => updateParams('page', String(pagination.current_page + 1))}
                         >
                           Siguiente

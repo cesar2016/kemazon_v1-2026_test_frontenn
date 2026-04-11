@@ -1,13 +1,84 @@
-import { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useState, useEffect, useMemo } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Gavel, Users, TrendingUp, Trophy, ChevronRight } from 'lucide-react';
-import { auctionService } from '../../services/api';
+import { 
+  Gavel, Users, TrendingUp, Trophy, ChevronRight, 
+  Target, Info, ArrowLeft, Share2, Star, Zap, 
+  ChevronLeft, ZoomIn, Package, Shield, Truck, 
+  RotateCcw, CreditCard, Check, Clock, Heart, 
+  Eye, History, User, Sparkles, X
+} from 'lucide-react';
+import { auctionService, productService } from '../../services/api';
 import { Layout } from '../../components/layout';
 import { Card, Badge, PriceFormatter, Spinner, Button, CountdownTimer, Modal } from '../../components/ui';
 import { useAuth } from '../../contexts/AuthContext';
 import { useAuctionRealtime } from '../../hooks/useAuctionRealtime';
 import { toast } from 'sonner';
+
+/**
+ * ImageCarouselModal - Premium Fullscreen Image Viewer
+ */
+function ImageCarouselModal({ images, initialIndex, onClose }) {
+    const [currentIndex, setCurrentIndex] = useState(initialIndex);
+  
+    const goToPrevious = (e) => {
+      e.stopPropagation();
+      setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+    };
+  
+    const goToNext = (e) => {
+      e.stopPropagation();
+      setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+    };
+  
+    return (
+      <div 
+        className="fixed inset-0 z-[100] bg-gray-950/95 backdrop-blur-xl flex items-center justify-center animate-fade-in"
+        onClick={onClose}
+      >
+        <button
+          onClick={onClose}
+          className="absolute top-6 right-6 text-white/70 hover:text-white transition-colors z-50 bg-white/10 p-3 rounded-full hover:bg-white/20"
+        >
+          <X className="w-6 h-6" />
+        </button>
+  
+        <button
+          onClick={goToPrevious}
+          className="absolute left-4 sm:left-8 text-white/70 hover:text-white p-4 bg-white/5 hover:bg-white/10 rounded-full transition-all backdrop-blur-md z-40 hidden sm:block"
+        >
+          <ChevronLeft className="w-8 h-8" />
+        </button>
+  
+        <div className="w-full h-full flex items-center justify-center p-4 sm:p-12 cursor-default" onClick={e => e.stopPropagation()}>
+          <img
+            src={images[currentIndex]}
+            alt=""
+            className="max-w-full max-h-[85vh] object-contain drop-shadow-2xl select-none"
+          />
+        </div>
+  
+        <button
+          onClick={goToNext}
+          className="absolute right-4 sm:right-8 text-white/70 hover:text-white p-4 bg-white/5 hover:bg-white/10 rounded-full transition-all backdrop-blur-md z-40 hidden sm:block"
+        >
+          <ChevronRight className="w-8 h-8" />
+        </button>
+  
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-3">
+          {images.map((_, index) => (
+            <button
+              key={index}
+              onClick={(e) => { e.stopPropagation(); setCurrentIndex(index); }}
+              className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                currentIndex === index ? 'bg-amber-500 w-8' : 'bg-white/30 hover:bg-white/50'
+              }`}
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
 function calculateMinIncrement(currentPrice) {
   const price = Number(currentPrice);
@@ -26,10 +97,14 @@ function formatDateTime(dateString) {
 
 export function AuctionDetailPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { user, isAuthenticated } = useAuth();
   const queryClient = useQueryClient();
   const [bidAmount, setBidAmount] = useState('');
   const [showAllBids, setShowAllBids] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [bidType, setBidType] = useState('manual'); // 'manual' or 'auto'
 
   useAuctionRealtime(id);
 
@@ -38,56 +113,69 @@ export function AuctionDetailPage() {
     queryFn: () => auctionService.getById(id),
   });
 
+  const auction = data?.data?.auction;
+  const product = auction?.product;
+
+  const images = useMemo(() => {
+    if (!product) return [];
+    return (product.images && product.images.length > 0 && product.images[0] !== 'test')
+      ? product.images
+      : (product.thumbnail ? [product.thumbnail] : []);
+  }, [product]);
+
   const placeBidMutation = useMutation({
     mutationFn: (amount) => auctionService.placeBid(id, amount),
     onSuccess: () => {
       queryClient.invalidateQueries(['auction', id]);
       setBidAmount('');
-      toast.success('¡Oferta realizada con éxito!');
+      toast.success('¡Oferta realizada con éxito!', {
+        icon: <Zap className="w-4 h-4 text-amber-500 fill-current" />
+      });
     },
     onError: (error) => {
-      toast.error(error.response?.data?.message || 'Error al realizar la oferta');
+      // Error handled by interceptor, but we can do extra here
     },
   });
-
-  const [bidType, setBidType] = useState('manual'); // 'manual' or 'auto'
 
   const configureAutoBidMutation = useMutation({
     mutationFn: (maxBid) => auctionService.configureAutoBid(id, maxBid),
     onSuccess: (response) => {
       queryClient.invalidateQueries(['auction', id]);
       setBidAmount('');
-      toast.success(response.data.message || '¡Auto-oferta activada!');
-    },
-    onError: (error) => {
-      toast.error(error.response?.data?.message || 'Error al configurar la auto-oferta');
+      toast.success(response.data.message || '¡Auto-oferta activada!', {
+        icon: <Sparkles className="w-4 h-4 text-primary-500" />
+      });
     },
   });
 
   if (isLoading) {
     return (
       <Layout>
-        <div className="py-12"><Spinner size="lg" /></div>
-      </Layout>
-    );
-  }
-
-  if (error || !data?.data?.auction) {
-    return (
-      <Layout>
-        <div className="py-12 text-center">
-          <h2 className="text-xl font-semibold text-gray-900">Subasta no encontrada</h2>
-          <Link to="/auctions" className="text-primary-600 hover:underline mt-4 inline-block">
-            Volver a subastas
-          </Link>
+        <div className="min-h-[70vh] flex flex-col items-center justify-center">
+          <Spinner size="lg" />
+          <p className="mt-4 text-gray-500 font-bold animate-pulse">Conectando con la subasta...</p>
         </div>
       </Layout>
     );
   }
 
-  const auction = data.data.auction;
-  const product = auction.product;
-  const mainImage = product?.thumbnail || product?.images?.[0];
+  if (error || !auction) {
+    return (
+      <Layout>
+        <div className="py-20 text-center max-w-lg mx-auto px-6">
+          <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Gavel className="w-10 h-10 text-gray-300" />
+          </div>
+          <h2 className="text-3xl font-black text-gray-900 mb-4 tracking-tight">Subasta no disponible</h2>
+          <Button onClick={() => navigate('/auctions')} variant="primary" size="lg">
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Volver a Subastas
+          </Button>
+        </div>
+      </Layout>
+    );
+  }
+
   const now = new Date();
   const endsAt = new Date(auction.ends_at);
   const isAuctionEnded = endsAt < now;
@@ -97,290 +185,423 @@ export function AuctionDetailPage() {
   const minBid = Number(auction.current_price) + minIncrement;
   const isOwner = user?.id === product?.user_id;
 
-
   const handleBidding = () => {
     if (!isAuthenticated) {
-      toast.error('Debes iniciar sesión para ofertar');
-      return;
+        toast.error('Debes iniciar sesión para ofertar');
+        navigate('/login');
+        return;
     }
     if (isOwner) {
-      toast.error('No puedes ofertar en tu propia subasta');
-      return;
+        toast.error('No puedes ofertar en tu propia subasta');
+        return;
     }
     const amount = Number(bidAmount);
     if (isNaN(amount) || amount < minBid) {
-      toast.error(`El monto mínimo es $${minBid.toLocaleString('es-AR', { minimumFractionDigits: 0 })}`);
-      return;
+        toast.error(`La oferta mínima es $${minBid.toLocaleString('es-AR')}`);
+        return;
     }
 
     if (bidType === 'manual') {
-      placeBidMutation.mutate(amount);
+        placeBidMutation.mutate(amount);
     } else {
-      configureAutoBidMutation.mutate(amount);
+        configureAutoBidMutation.mutate(amount);
     }
   };
 
-  const sortedByAmount = [...(auction.bids || [])].sort((a, b) => b.amount - a.amount);
-  const winner = sortedByAmount[0];
+  const sortedBids = [...(auction.bids || [])].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  const winner = sortedBids[0]; // The most recent bid is usually the highest in our current data structure if sorted by created_at, but let's be sure
+  const highestBid = [...(auction.bids || [])].sort((a, b) => b.amount - a.amount)[0];
 
   return (
     <Layout>
-      <div className="bg-white py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="flex items-center space-x-2 text-sm text-gray-500 mb-6">
-            <Link to="/" className="hover:text-primary-600">Inicio</Link>
-            <span>/</span>
-            <Link to="/auctions" className="hover:text-primary-600">Subastas</Link>
-            <span>/</span>
-            <span className="text-gray-900">{product?.name}</span>
-          </nav>
+      <div className="bg-gray-50 min-h-screen">
+        {/* Breadcrumb */}
+        <div className="hidden sm:block border-b border-gray-100 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <nav className="flex text-sm font-medium w-full">
+              <Link to="/" className="text-gray-500 hover:text-primary-600 transition-colors">Inicio</Link>
+              <ChevronRight className="w-4 h-4 mx-2 text-gray-300" />
+              <Link to="/auctions" className="text-gray-500 hover:text-primary-600 transition-colors">Subastas</Link>
+              <ChevronRight className="w-4 h-4 mx-2 text-gray-300" />
+              <span className="text-gray-900 truncate">{product?.name}</span>
+            </nav>
+          </div>
+        </div>
 
-          <div className="grid lg:grid-cols-2 gap-8">
-            <div>
-              {mainImage ? (
-                <div className="aspect-square rounded-2xl overflow-hidden bg-gray-100 shadow-sm border border-gray-100">
-                  <img src={mainImage} alt={product?.name} className="w-full h-full object-cover" />
+        {/* Mobile Header */}
+        <div className="sm:hidden sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100 px-4 py-3 flex items-center justify-between w-full">
+          <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-gray-700 hover:bg-gray-100 rounded-full transition-colors">
+            <ArrowLeft className="w-6 h-6" />
+          </button>
+          <span className="font-bold text-gray-900 truncate max-w-[180px]">Subasta en Vivo</span>
+          <button className="p-2 -mr-2 text-gray-700 hover:bg-gray-100 rounded-full transition-colors">
+            <Share2 className="w-6 h-6" />
+          </button>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-12 w-full overflow-x-hidden">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-start w-full">
+            
+            {/* Gallery Section */}
+            <div className="lg:col-span-7 space-y-6 w-full">
+                <div className="flex flex-col-reverse sm:flex-row gap-4 w-full">
+                    {/* Thumbnails */}
+                    {images.length > 1 && (
+                        <div className="flex sm:flex-col gap-3 overflow-x-auto sm:overflow-y-auto scrollbar-hide sm:max-h-[600px] w-full sm:w-24 flex-shrink-0 pb-2 sm:pb-0">
+                            {images.map((image, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() => setSelectedImage(index)}
+                                    className={`group relative aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 flex-shrink-0 sm:w-full w-20 ${
+                                        selectedImage === index 
+                                            ? 'border-amber-500 ring-2 ring-amber-50 shadow-md' 
+                                            : 'border-transparent bg-white hover:border-gray-200'
+                                    }`}
+                                >
+                                    <img src={image} alt="" className="w-full h-full object-cover transition-transform group-hover:scale-110" />
+                                </button>
+                            ))}
+                        </div>
+                    )}
+
+                    {/* Main Image */}
+                    <div 
+                        className="flex-1 relative aspect-square sm:aspect-auto sm:h-[600px] rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden bg-white border border-gray-100 shadow-2xl shadow-gray-200/50 group cursor-zoom-in p-4 sm:p-0 min-w-0"
+                        onClick={() => setIsModalOpen(true)}
+                    >
+                        <div className="absolute top-6 left-6 z-10 flex flex-col gap-2">
+                            <Badge variant="warning" className="px-4 py-2 text-[10px] font-black uppercase tracking-widest bg-white/90 backdrop-blur-sm border-none shadow-sm">
+                                <Gavel className="w-3.5 h-3.5 mr-1" /> Subasta Activa
+                            </Badge>
+                            {canBid && (
+                                <Badge variant="success" className="px-4 py-2 text-[10px] font-black uppercase tracking-widest bg-white/90 backdrop-blur-sm border-none shadow-sm animate-pulse">
+                                    ¡VIVO!
+                                </Badge>
+                            )}
+                        </div>
+
+                        <img
+                            src={images[selectedImage]}
+                            alt={product?.name}
+                            className="w-full h-full object-contain transition-transform duration-700 ease-out group-hover:scale-110"
+                        />
+                        
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-all flex items-center justify-center opacity-0 group-hover:opacity-100">
+                            <div className="bg-white/90 backdrop-blur-md rounded-full p-4 shadow-2xl">
+                                <ZoomIn className="w-6 h-6 text-gray-800" />
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              ) : (
-                <div className="aspect-square rounded-2xl bg-gray-100 flex items-center justify-center">
-                  <Gavel className="w-20 h-20 text-gray-300" />
+
+                {/* Description Card */}
+                <div className="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-sm space-y-6">
+                    <div className="flex items-center gap-3">
+                        <div className="w-1.5 h-8 bg-amber-500 rounded-full" />
+                        <h2 className="text-2xl font-black text-gray-900 tracking-tight">Descripción del Lote</h2>
+                    </div>
+                    <div className="prose prose-lg max-w-none text-gray-600 leading-relaxed">
+                        <p className="whitespace-pre-wrap font-medium">
+                            {product?.description || 'No hay descripción disponible para este lote.'}
+                        </p>
+                    </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-8 border-t border-gray-50">
+                        <div className="p-4 bg-gray-50 rounded-2xl">
+                            <p className="text-xs font-bold text-gray-400 uppercase mb-1">Precio Base</p>
+                            <p className="font-bold text-gray-900">${Number(auction.starting_price).toLocaleString('es-AR')}</p>
+                        </div>
+                        <div className="p-4 bg-gray-50 rounded-2xl">
+                            <p className="text-xs font-bold text-gray-400 uppercase mb-1">Categoría</p>
+                            <p className="font-bold text-gray-900 truncate">{product?.category?.name || 'Inmuebles'}</p>
+                        </div>
+                        <div className="p-4 bg-gray-50 rounded-2xl col-span-2 sm:col-span-1">
+                            <p className="text-xs font-bold text-gray-400 uppercase mb-1">Garantía</p>
+                            <p className="font-bold text-gray-900">Kemazon Protect</p>
+                        </div>
+                    </div>
                 </div>
-              )}
             </div>
 
-            <div className="space-y-6">
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <Badge variant="warning">
-                    <Gavel className="w-4 h-4 mr-1" /> Subasta
-                  </Badge>
-                  {auction.is_active && !isAuctionEnded && (
-                    <Badge variant="success" className="animate-pulse">
-                      ¡En Vivo!
-                    </Badge>
-                  )}
-                </div>
-                <h1 className="text-3xl font-bold text-gray-900">{product?.name}</h1>
-                <p className="text-gray-500 mt-2">Vendedor: {product?.user?.name}</p>
-              </div>
-
-              <Card variant="glass" className="p-8 border-primary-100/50">
-                <div className="text-center mb-6">
-                  <p className="text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Precio Actual</p>
-                  <PriceFormatter price={auction.current_price} className="text-5xl font-black text-primary-600 tracking-tighter" />
-                  {winner && (
-                    <div className="mt-4 flex items-center justify-center gap-2 bg-secondary-100/50 py-1.5 px-4 rounded-full w-fit mx-auto border border-secondary-200">
-                      <Trophy className="w-4 h-4 text-secondary-600" />
-                      <span className="text-sm font-black text-secondary-800 uppercase tracking-tight">Líder: {winner.user?.name}</span>
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex justify-center mb-6">
-                  {isAuctionEnded ? (
-                    <div className="bg-gray-100 border border-gray-200 rounded-2xl px-8 py-4 shadow-inner">
-                      <span className="text-red-600 font-black uppercase tracking-widest text-sm">Subasta Finalizada</span>
-                    </div>
-                  ) : (
-                    <CountdownTimer
-                      endDate={auction.ends_at}
-                      onEnd={() => queryClient.invalidateQueries(['auction', id])}
-                    />
-                  )}
-                </div>
-
-                <div className="flex items-center justify-center gap-8 text-xs font-bold uppercase tracking-widest text-gray-500">
-                  <span className="flex items-center gap-2 bg-white/50 px-3 py-1.5 rounded-lg border border-white/50">
-                    <Users className="w-4 h-4 text-tertiary-500" /> {bidCount} pujas
-                  </span>
-                  <span className="flex items-center gap-2 bg-white/50 px-3 py-1.5 rounded-lg border border-white/50">
-                    Base: ${Number(auction.starting_price).toLocaleString('es-AR', { minimumFractionDigits: 0 })}
-                  </span>
-                </div>
-              </Card>
-
-              <Card className="p-1 border-0 bg-transparent shadow-none">
-                <div className="flex items-center justify-between mb-4 px-2">
-                  <h3 className="font-black text-gray-900 uppercase tracking-tighter text-lg italic">¡Haz tu jugada!</h3>
-                  <div className="flex bg-gray-200/50 backdrop-blur-sm p-1 rounded-xl border border-white/50">
-                    <button
-                      onClick={() => setBidType('manual')}
-                      className={`px-4 py-2 text-xs font-black rounded-lg transition-all uppercase tracking-widest ${bidType === 'manual'
-                        ? 'bg-white text-primary-600 shadow-glass-sm'
-                        : 'text-gray-500 hover:text-gray-700'
-                        }`}
-                    >
-                      Manual
-                    </button>
-                    <button
-                      onClick={() => setBidType('auto')}
-                      className={`px-4 py-2 text-xs font-black rounded-lg transition-all uppercase tracking-widest ${bidType === 'auto'
-                        ? 'bg-white text-primary-600 shadow-glass-sm'
-                        : 'text-gray-500 hover:text-gray-700'
-                        }`}
-                    >
-                      Auto 🚀
-                    </button>
-                  </div>
-                </div>
-
-                {!isAuthenticated ? (
-                  <div className="glass-card p-8 text-center">
-                    <p className="text-gray-600 font-bold mb-4">Inicia sesión para ganar este producto</p>
-                    <Link to="/login">
-                      <Button variant="primary" className="w-full">Iniciar Sesión</Button>
-                    </Link>
-                  </div>
-                ) : isOwner ? (
-                  <div className="glass p-6 text-center rounded-2xl">
-                    <p className="text-gray-500 font-black italic uppercase tracking-widest text-xs">Es tu propio producto</p>
-                  </div>
-                ) : !canBid ? (
-                  <div className="glass p-6 text-center rounded-2xl border-red-100">
-                    <p className="text-red-500 font-black uppercase tracking-widest text-xs">Subasta terminada</p>
-                  </div>
-                ) : (
-                  <div className="glass-card p-6 border-white/60">
-                    <div className="space-y-4">
-                      <div className="flex gap-3">
-                        <div className="relative flex-1 group">
-                          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-primary-400 font-black transition-colors group-focus-within:text-primary-600">$</span>
-                          <input
-                            type="number"
-                            value={bidAmount}
-                            onChange={(e) => setBidAmount(e.target.value)}
-                            placeholder={bidType === 'manual' ? `Mínimo ${minBid.toLocaleString()}` : 'Monto Máximo'}
-                            className="w-full pl-8 pr-4 py-4 border border-gray-100 bg-white/50 rounded-2xl focus:bg-white focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 font-black text-xl transition-all"
-                          />
-                        </div>
-                        <Button
-                          onClick={handleBidding}
-                          loading={placeBidMutation.isPending || configureAutoBidMutation.isPending}
-                          className="px-8 shadow-2xl"
-                        >
-                          {bidType === 'manual' ? 'PUJAR YA' : 'ACTIVAR'}
-                        </Button>
-                      </div>
-
-                      {bidType === 'auto' && (
-                        <div className="bg-tertiary-50/50 p-4 rounded-2xl border border-tertiary-100 backdrop-blur-sm animate-fade-in">
-                          <p className="text-[11px] text-tertiary-800 leading-relaxed font-bold uppercase tracking-wide">
-                            <span className="text-tertiary-600 mr-2">🚀 Smart Bid:</span> Ingresa tu presupuesto máximo. Nosotros pujamos lo justo para mantenerte líder.
-                          </p>
-                        </div>
-                      )}
-
-                      <div className="flex items-center justify-between px-2">
-                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Incr. Mín: ${minIncrement.toLocaleString()}</span>
-                        {bidType === 'manual' && (
-                          <span className="text-[10px] font-black text-primary-600 uppercase tracking-widest animate-pulse">¡Siguiente: ${minBid.toLocaleString()}!</span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </Card>
-
-              <Card className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-semibold text-gray-900">Historial de Pujas</h3>
-                  <Badge variant="secondary">{bidCount}</Badge>
-                </div>
-
-                {!auction.bids || auction.bids.length === 0 ? (
-                  <div className="text-center py-8 text-gray-500">
-                    <p>No hay ofertas aún</p>
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    {[...(auction.bids || [])]
-                      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-                      .slice(0, 10)
-                      .map((bid, index) => {
-                        const isWinner = index === 0;
-                        const { date, time } = formatDateTime(bid.created_at);
-                        return (
-                          <div
-                            key={bid.id}
-                            className={`flex items-center justify-between py-3 px-3 rounded-xl ${isWinner ? 'bg-amber-50 border border-amber-200' : 'bg-gray-50'
-                              }`}
-                          >
-                            <div className="flex items-center gap-3">
-                              {isWinner && (
-                                <div className="w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center">
-                                  <Trophy className="w-4 h-4 text-white" />
-                                </div>
-                              )}
-                              {!isWinner && (
-                                <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                                  <span className="text-gray-600 font-medium text-sm">
-                                    {bid.user?.name?.charAt(0).toUpperCase() || '?'}
-                                  </span>
-                                </div>
-                              )}
-                              <div>
-                                <div className="flex items-center gap-2">
-                                  <p className={`font-medium ${isWinner ? 'text-amber-700' : 'text-gray-900'}`}>
-                                    {bid.user?.name || 'Usuario'}
-                                  </p>
-                                  {isWinner && (
-                                    <span className="bg-amber-500 text-white text-xs px-2 py-0.5 rounded-full">Ganador</span>
-                                  )}
-                                </div>
-                                <p className="text-xs text-gray-500">{date} - {time}</p>
-                              </div>
+            {/* Auction Bidding Info Section */}
+            <div className="lg:col-span-5 space-y-8 h-full w-full">
+                
+                {/* Status & Title Card */}
+                <div className="bg-white rounded-[2.5rem] p-8 sm:p-10 border border-gray-100 shadow-xl shadow-gray-200/50 space-y-6 w-full relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full blur-3xl -mr-16 -mt-16" />
+                    
+                    <div className="space-y-4 relative z-10">
+                        <div className="flex items-center gap-4">
+                            <Badge variant="warning" className="px-3 py-1 font-black text-[10px] tracking-widest border-none">
+                                LOTE #{id}
+                            </Badge>
+                            <div className="flex items-center gap-1.5 text-xs font-bold text-gray-400 uppercase tracking-wider">
+                                <Users className="w-3.5 h-3.5" />
+                                {bidCount} pujas
                             </div>
-                            <PriceFormatter price={bid.amount} className={isWinner ? 'text-amber-700 font-bold' : ''} />
-                          </div>
-                        );
-                      })}
-                    {(auction.bids || []).length > 10 && (
-                      <button
-                        onClick={() => setShowAllBids(true)}
-                        className="w-full py-3 text-center text-primary-600 hover:text-primary-700 font-medium"
-                      >
-                        Ver todas las {(auction.bids || []).length} ofertas <ChevronRight className="w-4 h-4 inline" />
-                      </button>
+                            <div className="flex items-center gap-1.5 text-xs font-bold text-gray-400 uppercase tracking-wider">
+                                <Eye className="w-3.5 h-3.5" />
+                                En directo
+                            </div>
+                        </div>
+
+                        <h1 className="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight leading-[1.1]">
+                            {product?.name}
+                        </h1>
+                    </div>
+
+                    {/* Timer Section */}
+                    <div className="py-6 border-y border-gray-50 bg-gradient-to-r from-amber-50/30 to-transparent -mx-8 px-8">
+                        <p className="text-xs font-black text-amber-600 uppercase tracking-widest mb-4 flex items-center gap-2">
+                             <Clock className="w-3.5 h-3.5" /> Finaliza en:
+                        </p>
+                        <div className="flex justify-start">
+                            {isAuctionEnded ? (
+                                <Badge variant="danger" className="p-4 rounded-xl text-lg font-black w-full text-center">
+                                    SUBASTA CERRADA
+                                </Badge>
+                            ) : (
+                                <CountdownTimer 
+                                    endDate={auction.ends_at} 
+                                    onEnd={() => queryClient.invalidateQueries(['auction', id])}
+                                />
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Price & Current Info */}
+                    <div className="space-y-6 pt-4">
+                        <div className="bg-gray-50 rounded-3xl p-6 border border-gray-100 relative group transition-all hover:bg-white hover:shadow-lg">
+                            <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Precio Actual</p>
+                            <div className="flex items-end gap-3">
+                                <PriceFormatter price={auction.current_price} className="text-5xl font-black text-primary-600 tracking-tighter" />
+                            </div>
+                            
+                            {highestBid && (
+                                <div className="mt-4 p-3 bg-white rounded-2xl flex items-center justify-between border border-emerald-100 shadow-sm animate-fade-in">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center">
+                                            <Trophy className="w-4 h-4 text-emerald-600" />
+                                        </div>
+                                        <div>
+                                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Líder Actual</p>
+                                            <p className="text-sm font-black text-gray-900">{highestBid.user?.name}</p>
+                                        </div>
+                                    </div>
+                                    <Badge variant="success" className="px-2 py-0.5 rounded-full text-[9px] font-black tracking-widest">
+                                        liderando
+                                    </Badge>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Bid Controls */}
+                        {!isAuctionEnded && (
+                            <div className="space-y-4">
+                                <div className="flex p-1.5 bg-gray-100 rounded-2xl gap-1">
+                                    <button 
+                                        onClick={() => setBidType('manual')}
+                                        className={`flex-1 py-3 text-xs font-black rounded-xl transition-all uppercase tracking-widest ${
+                                            bidType === 'manual' ? 'bg-white shadow-md text-gray-900 scale-[1.02]' : 'text-gray-400 hover:text-gray-600'
+                                        }`}
+                                    >
+                                        Oferta Manual
+                                    </button>
+                                    <button 
+                                        onClick={() => setBidType('auto')}
+                                        className={`flex-1 py-3 text-xs font-black rounded-xl transition-all uppercase tracking-widest flex items-center justify-center gap-2 ${
+                                            bidType === 'auto' ? 'bg-white shadow-md text-amber-600 scale-[1.02]' : 'text-gray-400 hover:text-gray-600'
+                                        }`}
+                                    >
+                                        Smart Bid <Sparkles className="w-3.5 h-3.5" />
+                                    </button>
+                                </div>
+
+                                {isAuthenticated ? (
+                                    isOwner ? (
+                                        <div className="p-6 bg-blue-50 text-blue-700 rounded-[2rem] text-center font-bold text-sm border border-blue-100">
+                                            Ves tu propio publicación
+                                        </div>
+                                    ) : (
+                                        <div className="space-y-4">
+                                            <div className="relative group">
+                                                <span className="absolute left-5 top-1/2 -translate-y-1/2 text-xl font-black text-gray-400 transition-colors group-focus-within:text-primary-500">$</span>
+                                                <input 
+                                                    type="number"
+                                                    value={bidAmount}
+                                                    onChange={(e) => setBidAmount(e.target.value)}
+                                                    placeholder={bidType === 'manual' ? `Mínimo ${minBid.toLocaleString()}` : "Ingresa tu tope máximo"}
+                                                    className="w-full pl-10 pr-6 py-5 rounded-[1.5rem] bg-gray-50 border border-gray-100 focus:bg-white focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 font-black text-2xl transition-all outline-none"
+                                                />
+                                            </div>
+                                            <Button 
+                                                onClick={handleBidding}
+                                                size="lg"
+                                                className="w-full py-5 rounded-[1.25rem] text-lg font-black bg-gradient-to-r from-gray-900 to-gray-800 hover:shadow-2xl hover:shadow-gray-900/40 transform hover:-translate-y-1 transition-all"
+                                                loading={placeBidMutation.isPending || configureAutoBidMutation.isPending}
+                                            >
+                                                {bidType === 'manual' ? 'REALIZAR OFERTA' : 'ACTIVAR SMART BID'}
+                                            </Button>
+                                            
+                                            {bidType === 'auto' && (
+                                                <div className="p-4 bg-amber-50 rounded-2xl border border-amber-100 animate-fade-in">
+                                                    <p className="text-[11px] text-amber-800 font-bold uppercase tracking-tight italic flex items-start gap-2">
+                                                        <Info className="w-3.5 h-3.5 flex-shrink-0" />
+                                                        El sistema se encargará de pujar por ti lo mínimo necesario para ganar hasta alcanzar tu presupuesto máximo.
+                                                    </p>
+                                                </div>
+                                            )}
+
+                                            <div className="flex items-center justify-between px-2">
+                                                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Incremento Mín: ${minIncrement.toLocaleString()}</span>
+                                                <span className="text-[10px] font-black text-primary-600 uppercase tracking-widest flex items-center gap-1">
+                                                    Siguiente puja: ${minBid.toLocaleString()}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    )
+                                ) : (
+                                    <div className="p-8 bg-gray-50 rounded-[2rem] text-center border border-gray-100">
+                                        <p className="text-gray-500 font-bold mb-4">Inicia sesión como comprador para ofertar</p>
+                                        <Link to="/login">
+                                            <Button variant="primary" className="w-full py-4 rounded-2xl">Ingresar Ahora</Button>
+                                        </Link>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Bid History Card */}
+                <div className="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-sm transition-all hover:shadow-lg">
+                    <div className="flex items-center justify-between mb-6">
+                        <h3 className="text-lg font-black text-gray-900 tracking-tight flex items-center gap-2">
+                            <History className="w-5 h-5 text-gray-400" />
+                            Historial de Ofertas
+                        </h3>
+                        <Badge variant="secondary" className="px-2 font-black text-xs">{bidCount}</Badge>
+                    </div>
+
+                    {!auction.bids || auction.bids.length === 0 ? (
+                        <div className="py-12 text-center text-gray-400 bg-gray-50/50 rounded-2xl border-2 border-dashed border-gray-100">
+                            <Zap className="w-8 h-8 mx-auto mb-2 opacity-20" />
+                            <p className="text-sm font-bold uppercase tracking-widest">Aún no hay ofertas</p>
+                        </div>
+                    ) : (
+                        <div className="space-y-3">
+                            {sortedBids.slice(0, 5).map((bid, index) => {
+                                const isHighest = bid.id === highestBid?.id;
+                                const { date, time } = formatDateTime(bid.created_at);
+                                return (
+                                    <div 
+                                        key={bid.id} 
+                                        className={`flex items-center justify-between p-4 rounded-2xl transition-all border ${
+                                            isHighest ? 'bg-amber-50 border-amber-200 shadow-sm' : 'bg-gray-50 border-transparent hover:bg-gray-100'
+                                        }`}
+                                    >
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center border border-gray-100 shadow-sm">
+                                                {isHighest ? <Trophy className="w-5 h-5 text-amber-500" /> : <User className="w-5 h-5 text-gray-400" />}
+                                            </div>
+                                            <div>
+                                                <p className={`text-sm font-black ${isHighest ? 'text-amber-800' : 'text-gray-900'}`}>{bid.user?.name}</p>
+                                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">{time}</p>
+                                            </div>
+                                        </div>
+                                        <div className="text-right">
+                                            <PriceFormatter price={bid.amount} className={`text-lg font-black ${isHighest ? 'text-amber-700' : 'text-gray-900'}`} />
+                                            {isHighest && <span className="text-[9px] font-black text-amber-600 block uppercase tracking-widest -mt-1">Ganando</span>}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                            
+                            {bidCount > 5 && (
+                                <button 
+                                    onClick={() => setShowAllBids(true)}
+                                    className="w-full mt-4 text-xs font-black text-primary-600 hover:text-primary-700 uppercase tracking-widest py-3 border-t border-gray-50 group"
+                                >
+                                    Ver todas las ofertas <ChevronRight className="w-4 h-4 inline group-hover:translate-x-1 transition-transform" />
+                                </button>
+                            )}
+                        </div>
                     )}
-                  </div>
-                )}
-              </Card>
+                </div>
+
+                {/* Seller Mini Card */}
+                <div className="bg-gray-100/50 rounded-[2rem] p-8 flex items-center gap-5 border border-gray-200/50">
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center text-white font-black text-xl shadow-lg">
+                        {auction.seller?.name?.charAt(0).toUpperCase() || 'V'}
+                    </div>
+                    <div>
+                        <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">Publicado por</p>
+                        <p className="text-lg font-black text-gray-900 leading-tight">{auction.seller?.name || product?.user?.name}</p>
+                        <p className="text-xs text-green-600 font-bold flex items-center gap-1">
+                            <Shield className="w-3 h-3" /> Verificado por Kemazon
+                        </p>
+                    </div>
+                </div>
+
             </div>
           </div>
         </div>
       </div>
 
-      <Modal isOpen={showAllBids} onClose={() => setShowAllBids(false)} title={`Todas las Ofertas (${(auction.bids || []).length})`}>
-        <div className="max-h-96 overflow-y-auto space-y-2">
-          {[...(auction.bids || [])]
-            .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-            .map((bid, index) => {
-              const isWinner = index === 0;
-              const { date, time } = formatDateTime(bid.created_at);
-              return (
-                <div
-                  key={bid.id}
-                  className={`flex items-center justify-between py-3 px-4 rounded-xl ${isWinner ? 'bg-amber-50 border border-amber-200' : 'bg-gray-50'
-                    }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${isWinner ? 'bg-amber-500' : 'bg-gray-200'}`}>
-                      {isWinner ? <Trophy className="w-5 h-5 text-white" /> : <span className="text-gray-600 font-medium">{bid.user?.name?.charAt(0).toUpperCase()}</span>}
+      {/* Modals & Fullscreen Images */}
+      {isModalOpen && (
+        <ImageCarouselModal
+          images={images}
+          initialIndex={selectedImage}
+          onClose={() => setIsModalOpen(false)}
+        />
+      )}
+
+      <Modal isOpen={showAllBids} onClose={() => setShowAllBids(false)} title={`Historial de Pujas (${bidCount})`}>
+        <div className="max-h-[60vh] overflow-y-auto space-y-3 pr-2 scrollbar-hide">
+            {sortedBids.map((bid, index) => {
+                const isHighest = index === 0;
+                const { date, time } = formatDateTime(bid.created_at);
+                return (
+                    <div key={bid.id} className={`flex items-center justify-between p-4 rounded-2xl border ${isHighest ? 'bg-amber-50 border-amber-200' : 'bg-gray-50 border-transparent'}`}>
+                        <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm">
+                                {isHighest ? <Trophy className="w-5 h-5 text-amber-500" /> : <User className="w-5 h-5 text-gray-400" />}
+                            </div>
+                            <div>
+                                <p className="font-black text-gray-900">{bid.user?.name}</p>
+                                <p className="text-xs text-gray-500">{date} - {time}</p>
+                            </div>
+                        </div>
+                        <div className="text-right">
+                            <PriceFormatter price={bid.amount} className={`text-lg font-black ${isHighest ? 'text-amber-600' : 'text-gray-900'}`} />
+                        </div>
                     </div>
-                    <div>
-                      <p className={`font-medium ${isWinner ? 'text-amber-700' : 'text-gray-900'}`}>{bid.user?.name || 'Usuario'}</p>
-                      <p className="text-xs text-gray-500">{date} - {time}</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <PriceFormatter price={bid.amount} className={isWinner ? 'text-amber-700 font-bold text-lg' : ''} />
-                    {isWinner && <span className="text-xs text-amber-600 font-medium block">Ganador</span>}
-                  </div>
-                </div>
-              );
+                );
             })}
         </div>
       </Modal>
+
+      {/* Persistent Bid Bar for Mobile */}
+      {canBid && (
+        <div className="sm:hidden fixed bottom-0 left-0 right-0 z-50 p-4 bg-white/95 backdrop-blur-xl border-t border-gray-100 shadow-[0_-8px_30px_rgb(0,0,0,0.08)] animate-slide-up">
+            <div className="flex items-center gap-4">
+                <div className="flex-1">
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Precio Actual</p>
+                    <PriceFormatter price={auction.current_price} className="text-2xl font-black text-gray-900 tracking-tighter" />
+                </div>
+                <Button 
+                    onClick={() => {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        toast('Dinos cuánto quieres ofrecer en el panel de pujas');
+                    }} 
+                    className="flex-[1.5] py-4 rounded-2xl font-black bg-amber-500 hover:bg-amber-600 text-white shadow-xl shadow-amber-500/20"
+                >
+                    <Gavel className="w-5 h-5 mr-2" />
+                    Pujar Ahora
+                </Button>
+            </div>
+        </div>
+      )}
     </Layout>
   );
 }

@@ -7,17 +7,18 @@
     box-sizing: border-box;
   }
 
-  html {
-    scroll-behavior: smooth;
-  }
-
   body {
-    @apply bg-gray-50 text-gray-900 antialiased;
+    @apply bg-gray-50 text-gray-900 antialiased overflow-x-hidden w-full max-w-full;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
   }
 
+  html {
+    @apply overflow-x-hidden w-full;
+    scroll-behavior: smooth;
+  }
+
   #root {
-    @apply min-h-screen flex flex-col;
+    @apply min-h-screen flex flex-col overflow-x-hidden w-full;
   }
 }
 
@@ -148,5 +149,26 @@
       opacity: 1;
       transform: translateY(0);
     }
+  }
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }
