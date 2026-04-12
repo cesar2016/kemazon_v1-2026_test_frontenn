@@ -386,8 +386,9 @@ export function ProductDetailPage() {
                     </button>
                   </div>
 
-                  <h1 className="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight leading-[1.1]">
-                    {product.name}
+                  <h1 className="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight leading-[1.1] group relative">
+                    <span className="relative z-10">{product.name}</span>
+                    <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent opacity-0 group-hover:opacity-100 translate-x-[-100%] group-hover:translate-x-[100%] transition-all duration-700 ease-in-out blur-sm"></span>
                   </h1>
                 </div>
 
