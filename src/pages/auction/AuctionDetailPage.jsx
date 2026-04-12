@@ -11,6 +11,7 @@ import {
 import { auctionService, productService } from '../../services/api';
 import { Layout } from '../../components/layout';
 import { Card, Badge, PriceFormatter, Spinner, Button, CountdownTimer, Modal } from '../../components/ui';
+import { LikersModal } from '../../components/product/LikersModal';
 import { useAuth } from '../../contexts/AuthContext';
 import { useAuctionRealtime } from '../../hooks/useAuctionRealtime';
 import { toast } from 'sonner';
@@ -104,6 +105,8 @@ export function AuctionDetailPage() {
   const [showAllBids, setShowAllBids] = useState(false);
   const [selectedImage, setSelectedImage] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLikersModalOpen, setIsLikersModalOpen] = useState(false);
+  const [isVisitorsModalOpen, setIsVisitorsModalOpen] = useState(false);
   const [bidType, setBidType] = useState('manual'); // 'manual' or 'auto'
 
   useAuctionRealtime(id);
@@ -145,6 +148,13 @@ export function AuctionDetailPage() {
       toast.success(response.data.message || '¡Auto-oferta activada!', {
         icon: <Sparkles className="w-4 h-4 text-primary-500" />
       });
+    },
+  });
+
+  const toggleLikeMutation = useMutation({
+    mutationFn: (productId) => productService.toggleLike(productId),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['auction', id]);
     },
   });
 
@@ -340,8 +350,21 @@ export function AuctionDetailPage() {
                             </div>
                             <div className="flex items-center gap-1.5 text-xs font-bold text-gray-400 uppercase tracking-wider">
                                 <Eye className="w-3.5 h-3.5" />
-                                En directo
+                                {product?.valid_visits_count || 0} visitas
                             </div>
+                            <button 
+                                onClick={() => {
+                                    if (isAuthenticated) {
+                                        toggleLikeMutation.mutate(product?.id);
+                                    } else {
+                                        toast.info('Debes iniciar sesión para dar me gusta');
+                                    }
+                                }}
+                                className="flex items-center gap-1.5 text-xs font-bold text-gray-400 hover:text-red-500 transition-colors uppercase tracking-wider"
+                            >
+                                <Heart className="w-3.5 h-3.5" />
+                                {product?.likes_count || 0} favoritos
+                            </button>
                         </div>
 
                         <h1 className="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight leading-[1.1] group relative">
@@ -603,6 +626,22 @@ export function AuctionDetailPage() {
             </div>
         </div>
       )}
+
+      <LikersModal
+        isOpen={isLikersModalOpen}
+        onClose={() => setIsLikersModalOpen(false)}
+        likers={product?.likes || []}
+        isLoading={false}
+        title="A quienes les gusta este producto"
+      />
+      <LikersModal
+        isOpen={isVisitorsModalOpen}
+        onClose={() => setIsVisitorsModalOpen(false)}
+        likers={product?.visitors || []}
+        isLoading={false}
+        title="Visitas del producto"
+        emptyMessage="Aún no hay visitas registradas."
+      />
     </Layout>
   );
 }
