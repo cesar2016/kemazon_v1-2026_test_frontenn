@@ -148,7 +148,7 @@ export function ProductDetailPage() {
 
       return () => clearInterval(interval);
     }
-  }, [product]);
+  }, [product, navigate, pingVisitMutation]);
 
   // UI Helpers
   const images = useMemo(() => {
