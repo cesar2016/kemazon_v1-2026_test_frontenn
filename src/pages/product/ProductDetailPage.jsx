@@ -129,26 +129,25 @@ export function ProductDetailPage() {
 
   const pingVisitMutation = useMutation({
     mutationFn: () => productService.pingVisit(product.id, visitSessionId),
+    retry: false,
+    retryOnMount: false,
   });
 
   // Effects
   useEffect(() => {
-    if (product) {
-      // If it's an auction, redirect as per existing pattern
-      if (product.type === 'auction' && product.auction?.id) {
-        navigate(`/auctions/${product.auction.id}`, { replace: true });
-        return;
-      }
-
-      // Track visits
-      pingVisitMutation.mutate();
-      const interval = setInterval(() => {
-        pingVisitMutation.mutate();
-      }, 5000);
-
-      return () => clearInterval(interval);
+    if (!product) return;
+    
+    // If it's an auction, redirect as per existing pattern
+    if (product.type === 'auction' && product.auction?.id) {
+      navigate(`/auctions/${product.auction.id}`, { replace: true });
+      return;
     }
-  }, [product, navigate, pingVisitMutation]);
+
+    // Track visits - only call once on mount
+    pingVisitMutation.mutate();
+    
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product?.id]);
 
   // UI Helpers
   const images = useMemo(() => {
