@@ -144,7 +144,7 @@ export function Header() {
                     <span className="hidden sm:block text-sm font-black text-gray-700">{user?.name}</span>
                   </button>
                   {isDropdownOpen && (
-                    <div className="absolute right-0 mt-3 w-56 glass rounded-2xl shadow-2xl border border-white/40 py-2 animate-fade-in overflow-hidden">
+                    <div className="absolute right-0 mt-3 w-56 bg-white rounded-2xl shadow-2xl border border-gray-100 py-2 animate-fade-in overflow-hidden z-50">
                       <div className="px-4 py-3 border-b border-gray-100 mb-2">
                         <p className="text-xs text-gray-500 font-bold uppercase tracking-wider">Bienvenido</p>
                         <p className="text-sm font-black text-gray-900 truncate">{user?.name}</p>
