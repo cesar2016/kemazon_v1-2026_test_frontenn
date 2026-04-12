@@ -61,7 +61,7 @@ export function NotificationDropdown({ isOpen, onClose }) {
     const count = data?.data?.count || 0;
 
     return (
-        <div className="absolute right-0 sm:right-0 mt-3 w-[calc(100vw-2rem)] sm:w-80 md:w-96 left-4 sm:left-auto bg-white rounded-2xl shadow-2xl border border-gray-100 py-0 animate-fade-in overflow-hidden z-50">
+        <div className="fixed left-4 right-4 sm:absolute sm:left-auto sm:right-0 sm:mt-3 sm:w-80 md:w-96 mx-auto max-w-sm bg-white rounded-2xl shadow-2xl border border-gray-100 py-0 animate-fade-in overflow-hidden z-50">
             <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
                 <div>
                     <h3 className="text-sm font-black text-gray-900 leading-none">Notificaciones</h3>
