@@ -251,7 +251,7 @@ export function AuctionDetailPage() {
                             {images.map((image, index) => (
                                 <button
                                     key={index}
-                                    onClick={() => setSelectedImage(index)}
+                                    onMouseEnter={() => setSelectedImage(index)}
                                     className={`group relative aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300 flex-shrink-0 sm:w-full w-20 ${
                                         selectedImage === index 
                                             ? 'border-amber-500 ring-2 ring-amber-50 shadow-md' 
