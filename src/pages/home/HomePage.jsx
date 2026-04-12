@@ -132,7 +132,10 @@ export function HomePage() {
           <div className="text-center max-w-3xl mx-auto">
             <h1 className="text-5xl md:text-6xl font-bold mb-6">
               Compra, Vende y{' '}
-              <span className="gradient-text">Puja</span>{' '}
+              <span className="gradient-text flex items-center justify-center gap-2">
+                <Gavel className="w-8 h-8 md:w-10 md:h-10" />
+                REMATA
+              </span>{' '}
               en KEMAZON
             </h1>
             <p className="text-xl text-gray-600 mb-8">
