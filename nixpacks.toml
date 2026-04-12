@@ -8,7 +8,7 @@ cmd = "npx serve -s dist -l 3000"
 [staticAssets]
 Caddyfile = '''
 :{$PORT:3000} {
-    root * ../app/dist
+    root * dist
     encode gzip
     file_server
     try_files {path} /index.html
