@@ -249,10 +249,6 @@ export function AuctionDetailPage() {
         <meta property="og:image" content={images?.[0] || ''} />
         <meta property="og:url" content={window.location.href} />
         <meta property="og:type" content="product" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={product?.name} />
-        <meta name="twitter:description" content={product?.description?.substring(0, 160)} />
-        <meta name="twitter:image" content={images?.[0] || ''} />
       </Helmet>
       <Layout>
         <div className="bg-gray-50 min-h-screen">
