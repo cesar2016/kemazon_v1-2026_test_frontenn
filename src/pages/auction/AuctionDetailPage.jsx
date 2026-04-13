@@ -101,7 +101,15 @@ export function AuctionDetailPage() {
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuth();
   const queryClient = useQueryClient();
-  const [bidAmount, setBidAmount] = useState('');
+  const minIncrement = (() => {
+    const price = Number(auction?.current_price) || 0;
+    if (price < 100000) return 5000;
+    if (price < 500000) return 10000;
+    if (price < 1000000) return 25000;
+    return 50000;
+  })();
+  const minBid = Number(auction?.current_price || 0) + minIncrement;
+  const [bidAmount, setBidAmount] = useState(String(minBid));
   const [showAllBids, setShowAllBids] = useState(false);
   const [selectedImage, setSelectedImage] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -208,8 +216,6 @@ export function AuctionDetailPage() {
   const isAuctionEnded = endsAt < now;
   const canBid = auction.is_active && !isAuctionEnded;
   const bidCount = auction.bids?.length || 0;
-  const minIncrement = calculateMinIncrement(auction.current_price);
-  const minBid = Number(auction.current_price) + minIncrement;
   const isOwner = user?.id === product?.user_id;
 
   const handleBidding = () => {
@@ -496,13 +502,12 @@ export function AuctionDetailPage() {
                         ) : (
                           <div className="space-y-4">
                             <div className="relative group">
-                              <span className="absolute left-5 top-1/2 -translate-y-1/2 text-xl font-black text-gray-400 transition-colors group-focus-within:text-primary-500">$</span>
+                              <span className="absolute left-5 top-1/2 -translate-y-1/2 text-xl font-black text-gray-400 transition-colors group-focus-within:text-red-500">$</span>
                               <input
                                 type="number"
                                 value={bidAmount}
                                 onChange={(e) => setBidAmount(e.target.value)}
-                                placeholder={bidType === 'manual' ? `Mínimo ${minBid.toLocaleString()}` : "Ingresa tu tope máximo"}
-                                className="w-full pl-10 pr-6 py-5 rounded-[1.5rem] bg-gray-50 border border-gray-100 focus:bg-white focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 font-black text-2xl transition-all outline-none"
+                                className="w-full pl-10 pr-6 py-5 rounded-[1.5rem] bg-gray-50 border-2 border-red-500 focus:bg-white focus:ring-4 focus:ring-red-500/10 focus:border-red-600 font-black text-2xl transition-all outline-none"
                               />
                             </div>
                             <Button
