@@ -155,6 +155,10 @@ export function AuctionDetailPage() {
     mutationFn: (productId) => productService.toggleLike(productId),
     onSuccess: () => {
       queryClient.invalidateQueries(['auction', id]);
+      toast.success('¡Agregado a favoritos!');
+    },
+    onError: (error) => {
+      toast.error('Error al dar me gusta');
     },
   });
 
