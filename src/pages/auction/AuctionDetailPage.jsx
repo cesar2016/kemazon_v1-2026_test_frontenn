@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Helmet } from 'react-helmet-async';
 import {
   Gavel, Users, TrendingUp, Trophy, ChevronRight,
   Target, Info, ArrowLeft, Share2, Star, Zap,
@@ -239,8 +240,22 @@ export function AuctionDetailPage() {
   const highestBid = [...(auction.bids || [])].sort((a, b) => b.amount - a.amount)[0];
 
   return (
-    <Layout>
-      <div className="bg-gray-50 min-h-screen">
+    <>
+      <Helmet>
+        <title>{product?.name} | Subasta KEMAZON.ar</title>
+        <meta name="description" content={product?.description?.substring(0, 160) || 'Participa en esta subasta en KEMAZON.ar - La mejor plataforma de subastas de Argentina.'} />
+        <meta property="og:title" content={(product?.name || 'Subasta') + ' | KEMAZON.ar'} />
+        <meta property="og:description" content={product?.description?.substring(0, 160) || 'Participa en esta subasta'} />
+        <meta property="og:image" content={images?.[0] || ''} />
+        <meta property="og:url" content={window.location.href} />
+        <meta property="og:type" content="product" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={product?.name} />
+        <meta name="twitter:description" content={product?.description?.substring(0, 160)} />
+        <meta name="twitter:image" content={images?.[0] || ''} />
+      </Helmet>
+      <Layout>
+        <div className="bg-gray-50 min-h-screen">
         {/* Breadcrumb */}
         <div className="hidden sm:block border-b border-gray-100 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -756,6 +771,7 @@ export function AuctionDetailPage() {
           </div>
         </div>
       )}
-    </Layout>
+      </Layout>
+    </>
   );
 }
