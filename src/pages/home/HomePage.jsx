@@ -23,7 +23,7 @@ function ProductCard({ product }) {
 
   return (
     <Link
-      to={isAuction ? `/auctions/${product.auction?.id}` : `/products/${product.slug}`}
+      to={isAuction ? `/auctions/${product.slug}` : `/products/${product.slug}`}
       className="group bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-2xl hover:shadow-amber-900/10 transition-all duration-500 flex flex-col h-full relative"
     >
       <div className="relative aspect-square overflow-hidden bg-gray-50">
@@ -184,7 +184,7 @@ export function HomePage() {
               {auctions.slice(0, 4).map((auction) => (
                 <Link
                   key={auction.id}
-                  to={`/auctions/${auction.id}`}
+                  to={`/auctions/${auction.product?.slug || auction.id}`}
                   className="group bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-2xl hover:shadow-amber-900/10 transition-all duration-500 flex flex-col h-full"
                 >
                   <div className="relative aspect-square overflow-hidden bg-gray-50">

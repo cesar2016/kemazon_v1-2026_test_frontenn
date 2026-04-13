@@ -46,7 +46,7 @@ function App() {
               <Route path="/products" element={<ProductsPage />} />
               <Route path="/products/:slug" element={<ProductDetailPage />} />
               <Route path="/auctions" element={<AuctionsPage />} />
-              <Route path="/auctions/:id" element={<AuctionDetailPage />} />
+              <Route path="/auctions/:slug" element={<AuctionDetailPage />} />
 
               {/* Private Profile & Seller Routes */}
               <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />

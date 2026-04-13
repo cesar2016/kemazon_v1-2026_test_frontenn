@@ -13,7 +13,7 @@ function AuctionCard({ auction }) {
   const [currentPrice, setCurrentPrice] = useState(auction.current_price);
 
   return (
-    <Link to={`/auctions/${auction.id}`} className="block">
+    <Link to={`/auctions/${auction.product?.slug || auction.id}`} className="block">
       <Card hover className="h-full relative overflow-hidden">
         <div className="absolute top-3 right-3 z-10">
           <Badge variant={bidCount > 0 ? 'success' : 'secondary'}>
