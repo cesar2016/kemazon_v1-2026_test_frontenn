@@ -72,7 +72,7 @@ export const productService = {
 
 export const auctionService = {
   getAll: (params) => api.get('/auctions', { params }),
-  getById: (id) => api.get(`/auctions/${id}`),
+  getById: (slug) => api.get(`/auctions/${slug}`),
   getMyAuctions: (params) => api.get('/seller/auctions', { params }),
   create: (data) => api.post('/seller/auctions', data),
   update: (id, data) => api.put(`/seller/auctions/${id}`, data),
