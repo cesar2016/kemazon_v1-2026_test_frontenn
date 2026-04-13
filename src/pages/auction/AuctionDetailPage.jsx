@@ -414,13 +414,16 @@ export function AuctionDetailPage() {
                       <Users className="w-3.5 h-3.5" />
                       {bidCount} pujas
                     </div>
-                    <div className="flex items-center gap-1.5 text-xs font-bold text-gray-400 uppercase tracking-wider">
+                    <button
+                      onClick={() => setIsVisitorsModalOpen(true)}
+                      className="flex items-center gap-1.5 text-xs font-bold text-gray-400 uppercase tracking-wider hover:text-primary-600 transition-colors"
+                    >
                       <Eye className="w-3.5 h-3.5" />
                       {product?.valid_visits_count || 0} visitas
-                    </div>
+                    </button>
                     <button
                       onClick={() => {
-                        toggleLikeMutation.mutate(product?.id);
+                        setIsLikersModalOpen(true);
                       }}
                       className={`flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider transition-colors ${
                         isLiked ? 'text-red-500' : 'text-gray-400 hover:text-red-500'
