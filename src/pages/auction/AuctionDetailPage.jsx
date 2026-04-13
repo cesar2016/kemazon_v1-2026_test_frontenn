@@ -132,6 +132,12 @@ export function AuctionDetailPage() {
   const [visitSessionId] = useState(() => Math.random().toString(36).substring(2, 15));
   const [bidType, setBidType] = useState('manual');
 
+  useEffect(() => {
+    if (auction?.current_price) {
+      setBidAmount(String(minBid));
+    }
+  }, [auction?.current_price, minBid]);
+
   const images = useMemo(() => {
     if (!product) return [];
     return (product.images && product.images.length > 0 && product.images[0] !== 'test')
