@@ -101,24 +101,6 @@ export function AuctionDetailPage() {
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuth();
   const queryClient = useQueryClient();
-  const minIncrement = (() => {
-    const price = Number(auction?.current_price) || 0;
-    if (price < 100000) return 5000;
-    if (price < 500000) return 10000;
-    if (price < 1000000) return 25000;
-    return 50000;
-  })();
-  const minBid = Number(auction?.current_price || 0) + minIncrement;
-  const [bidAmount, setBidAmount] = useState(String(minBid));
-  const [showAllBids, setShowAllBids] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(0);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isLikersModalOpen, setIsLikersModalOpen] = useState(false);
-  const [isVisitorsModalOpen, setIsVisitorsModalOpen] = useState(false);
-  const [isLiked, setIsLiked] = useState(false);
-  const [isShareOpen, setIsShareOpen] = useState(false);
-  const [visitSessionId] = useState(() => Math.random().toString(36).substring(2, 15));
-  const [bidType, setBidType] = useState('manual'); // 'manual' or 'auto'
 
   useAuctionRealtime(slug);
 
@@ -129,6 +111,26 @@ export function AuctionDetailPage() {
 
   const auction = data?.data?.auction;
   const product = auction?.product;
+
+  const minIncrement = (() => {
+    const price = Number(auction?.current_price) || 0;
+    if (price < 100000) return 5000;
+    if (price < 500000) return 10000;
+    if (price < 1000000) return 25000;
+    return 50000;
+  })();
+  const minBid = Number(auction?.current_price || 0) + minIncrement;
+
+  const [bidAmount, setBidAmount] = useState(String(minBid));
+  const [showAllBids, setShowAllBids] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLikersModalOpen, setIsLikersModalOpen] = useState(false);
+  const [isVisitorsModalOpen, setIsVisitorsModalOpen] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
+  const [isShareOpen, setIsShareOpen] = useState(false);
+  const [visitSessionId] = useState(() => Math.random().toString(36).substring(2, 15));
+  const [bidType, setBidType] = useState('manual');
 
   const images = useMemo(() => {
     if (!product) return [];
