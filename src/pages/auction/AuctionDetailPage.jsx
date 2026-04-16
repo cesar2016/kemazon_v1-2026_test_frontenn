@@ -132,11 +132,33 @@ export function AuctionDetailPage() {
   const [visitSessionId] = useState(() => Math.random().toString(36).substring(2, 15));
   const [bidType, setBidType] = useState('manual');
 
+  const { data: likersData, isLoading: isLoadingLikers } = useQuery({
+    queryKey: ['product-likers', product?.id],
+    queryFn: () => productService.getLikers(product.id),
+    enabled: !!product?.id,
+  });
+
+  const { data: visitorsData, isLoading: isLoadingVisitors } = useQuery({
+    queryKey: ['product-visitors', product?.id],
+    queryFn: () => productService.getVisitors(product.id),
+    enabled: !!product?.id,
+  });
+
+  useEffect(() => {
+    if (likersData?.data?.likers && user?.id) {
+      const hasLiked = likersData.data.likers.some(liker => String(liker.id) === String(user.id));
+      setIsLiked(hasLiked);
+    } else if (product?.is_liked !== undefined) {
+      setIsLiked(product.is_liked);
+    }
+  }, [likersData, user?.id, product?.is_liked]);
+
   useEffect(() => {
     if (auction?.current_price) {
       setBidAmount(String(minBid));
     }
   }, [auction?.current_price, minBid]);
+
 
   const images = useMemo(() => {
     if (!product) return [];
@@ -172,9 +194,14 @@ export function AuctionDetailPage() {
 
   const toggleLikeMutation = useMutation({
     mutationFn: (productId) => productService.toggleLike(productId),
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries(['auction', slug]);
-      setIsLiked(!isLiked);
+      queryClient.invalidateQueries(['product-likers', product?.id]);
+      if (data?.data?.liked !== undefined) {
+        setIsLiked(data.data.liked);
+      } else {
+        setIsLiked(prev => !prev);
+      }
     },
   });
 
@@ -693,15 +720,15 @@ export function AuctionDetailPage() {
       <LikersModal
         isOpen={isLikersModalOpen}
         onClose={() => setIsLikersModalOpen(false)}
-        likers={product?.likes || []}
-        isLoading={false}
+        likers={likersData?.data?.likers || []}
+        isLoading={isLoadingLikers}
         title="A quienes les gusta este producto"
       />
       <LikersModal
         isOpen={isVisitorsModalOpen}
         onClose={() => setIsVisitorsModalOpen(false)}
-        likers={product?.visitors || []}
-        isLoading={false}
+        likers={visitorsData?.data?.visitors || []}
+        isLoading={isLoadingVisitors}
         title="Visitas del producto"
         emptyMessage="Aún no hay visitas registradas."
       />
