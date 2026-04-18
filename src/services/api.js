@@ -1,7 +1,28 @@
 import axios from 'axios';
 import { toast } from 'sonner';
 
-const API_URL = import.meta.env.VITE_API_URL || '/api';
+const REMOTE_API_URL = 'https://kemazonv1-2026testbackenn-production.up.railway.app/api';
+const LOCAL_API_URL = 'http://127.0.0.1:8000/api';
+
+function isLocalEnvironment() {
+  if (typeof window === 'undefined') {
+    return import.meta.env.DEV;
+  }
+
+  return ['localhost', '127.0.0.1'].includes(window.location.hostname);
+}
+
+function resolveApiUrl() {
+  const configuredUrl = import.meta.env.VITE_API_URL?.trim();
+
+  if (configuredUrl) {
+    return configuredUrl.replace(/\/$/, '');
+  }
+
+  return isLocalEnvironment() ? LOCAL_API_URL : REMOTE_API_URL;
+}
+
+const API_URL = resolveApiUrl();
 
 const api = axios.create({
   baseURL: API_URL,
