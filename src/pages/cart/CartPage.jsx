@@ -1,6 +1,6 @@
 import { useCart } from '../../contexts/CartContext';
 import { Layout } from '../../components/layout';
-import { Button, Card, PriceFormatter } from '../../components/ui';
+import { Button, Card, PriceFormatter, ProductImage } from '../../components/ui';
 import { Trash2, Plus, Minus, ShoppingBag, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -53,13 +53,10 @@ export function CartPage() {
                             <Card key={item.id} className="p-3 sm:p-4 flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-center">
                                 <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gray-100 rounded-xl overflow-hidden flex-shrink-0 border border-gray-100">
                                     {item.product?.thumbnail || item.product?.images?.[0] ? (
-                                        <img
+                                        <ProductImage
                                             src={item.product?.thumbnail || item.product?.images?.[0]}
                                             alt={item.product?.name}
                                             className="w-full h-full object-cover"
-                                            onError={(e) => {
-                                                e.target.src = 'https://via.placeholder.com/150?text=Sin+Imagen';
-                                            }}
                                         />
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center bg-gray-50 text-gray-400">

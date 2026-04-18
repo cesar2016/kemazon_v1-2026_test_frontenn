@@ -3,7 +3,7 @@ import { ArrowRight, Gavel, Shield, Truck, CreditCard, Zap, Clock, Users, Trendi
 import { useQuery } from '@tanstack/react-query';
 import { productService, auctionService, categoryService } from '../../services/api';
 import { Layout } from '../../components/layout';
-import { Card, Badge, PriceFormatter, Spinner } from '../../components/ui';
+import { Card, Badge, PriceFormatter, Spinner, ProductImage } from '../../components/ui';
 import { CountdownTimer as AuctionTimer } from '../../components/ui/CountdownTimer'; // Renamed for clarity
 
 // Helper function for formatting price, as used in the new ProductCard
@@ -27,7 +27,7 @@ function ProductCard({ product }) {
       className="group bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-2xl hover:shadow-amber-900/10 transition-all duration-500 flex flex-col h-full relative"
     >
       <div className="relative aspect-square overflow-hidden bg-gray-50">
-        <img
+        <ProductImage
           src={product.thumbnail || 'https://via.placeholder.com/400x400?text=Kemazon'}
           alt={product.name}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
@@ -188,8 +188,8 @@ export function HomePage() {
                   className="group bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-2xl hover:shadow-amber-900/10 transition-all duration-500 flex flex-col h-full"
                 >
                   <div className="relative aspect-square overflow-hidden bg-gray-50">
-                    <img
-                      src={auction.product?.thumbnail || 'https://via.placeholder.com/400x400?text=Subasta'}
+                    <ProductImage
+                      src={auction.product?.thumbnail}
                       alt={auction.product?.name}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     />
