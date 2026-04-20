@@ -132,15 +132,15 @@ export function AuctionDetailPage() {
   const [visitSessionId] = useState(() => Math.random().toString(36).substring(2, 15));
   const [bidType, setBidType] = useState('manual');
 
-  const { data: likersData, isLoading: isLoadingLikers } = useQuery({
+  const { data: likersData, isLoading: isLoadingLikers, refetch: refetchLikers } = useQuery({
     queryKey: ['product-likers', product?.id],
-    queryFn: () => productService.getLikers(product.id),
+    queryFn: () => productService.getLikers(product?.id),
     enabled: !!product?.id,
   });
 
-  const { data: visitorsData, isLoading: isLoadingVisitors } = useQuery({
+  const { data: visitorsData, isLoading: isLoadingVisitors, refetch: refetchVisitors } = useQuery({
     queryKey: ['product-visitors', product?.id],
-    queryFn: () => productService.getVisitors(product.id),
+    queryFn: () => productService.getVisitors(product?.id),
     enabled: !!product?.id,
   });
 
@@ -442,7 +442,7 @@ export function AuctionDetailPage() {
                       {bidCount} pujas
                     </div>
                     <button
-                      onClick={() => setIsVisitorsModalOpen(true)}
+                      onClick={() => { refetchVisitors(); setIsVisitorsModalOpen(true); }}
                       className="flex items-center gap-1.5 text-xs font-bold text-gray-400 uppercase tracking-wider hover:text-primary-600 transition-colors"
                     >
                       <Eye className="w-3.5 h-3.5" />
@@ -450,6 +450,7 @@ export function AuctionDetailPage() {
                     </button>
                     <button
                       onClick={() => {
+                        refetchLikers();
                         setIsLikersModalOpen(true);
                       }}
                       className={`flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider transition-colors ${

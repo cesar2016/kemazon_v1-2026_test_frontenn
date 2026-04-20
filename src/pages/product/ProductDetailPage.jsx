@@ -116,15 +116,15 @@ export function ProductDetailPage() {
     },
   });
 
-  const { data: likersData, isLoading: isLoadingLikers } = useQuery({
+  const { data: likersData, isLoading: isLoadingLikers, refetch: refetchLikers } = useQuery({
     queryKey: ['product-likers', product?.id],
-    queryFn: () => productService.getLikers(product.id),
+    queryFn: () => productService.getLikers(product?.id),
     enabled: !!product?.id,
   });
 
-  const { data: visitorsData, isLoading: isLoadingVisitors } = useQuery({
+  const { data: visitorsData, isLoading: isLoadingVisitors, refetch: refetchVisitors } = useQuery({
     queryKey: ['product-visitors', product?.id],
-    queryFn: () => productService.getVisitors(product.id),
+    queryFn: () => productService.getVisitors(product?.id),
     enabled: !!product?.id,
   });
 
@@ -388,14 +388,14 @@ export function ProductDetailPage() {
                       4.8
                     </div>
                     <button
-                      onClick={() => setIsLikersModalOpen(true)}
+                      onClick={() => { refetchLikers(); setIsLikersModalOpen(true); }}
                       className="flex items-center gap-1.5 text-xs font-bold text-gray-400 hover:text-red-500 transition-colors uppercase tracking-wider"
                     >
                       <Heart className="w-3.5 h-3.5" />
                       {product.likes_count || 0} favoritos
                     </button>
                     <button
-                      onClick={() => setIsVisitorsModalOpen(true)}
+                      onClick={() => { refetchVisitors(); setIsVisitorsModalOpen(true); }}
                       className="flex items-center gap-1.5 text-xs font-bold text-gray-400 hover:text-primary-500 transition-colors uppercase tracking-wider"
                     >
                       <Eye className="w-3.5 h-3.5" />
