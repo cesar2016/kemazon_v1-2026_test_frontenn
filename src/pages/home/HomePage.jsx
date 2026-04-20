@@ -28,7 +28,11 @@ function ProductCard({ product }) {
     >
       <div className="relative aspect-square overflow-hidden bg-gray-50">
         <ProductImage
-          src={product.thumbnail || 'https://via.placeholder.com/400x400?text=Kemazon'}
+          src={product.thumbnail}
+          fallbackSrcs={[
+            product.images?.[0],
+            'https://via.placeholder.com/400x400?text=Kemazon',
+          ]}
           alt={product.name}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
         />
@@ -190,6 +194,10 @@ export function HomePage() {
                   <div className="relative aspect-square overflow-hidden bg-gray-50">
                     <ProductImage
                       src={auction.product?.thumbnail}
+                      fallbackSrcs={[
+                        auction.product?.images?.[0],
+                        'https://via.placeholder.com/400x400?text=Kemazon',
+                      ]}
                       alt={auction.product?.name}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     />

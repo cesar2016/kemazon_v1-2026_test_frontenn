@@ -186,27 +186,33 @@ export function PriceFormatter({ price, originalPrice, className = '' }) {
 
 export function ProductImage({
   src,
+  fallbackSrcs = [],
   alt = 'Imagen del producto',
   className = '',
-  sizes = 'w-full h-full',
   ...props
 }) {
   const [hasError, setHasError] = useState(false);
+  const [currentSrcIndex, setCurrentSrcIndex] = useState(0);
 
-  const placeholderSvg = (width, height) => (
-    `data:image/svg+xml,${encodeURIComponent(`
-      <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
-        <rect fill="%23f3f4f6" width="${width}" height="${height}"/>
-        <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%239ca3af" font-family="system-ui" font-size="14">Sin imagen</text>
-      </svg>
-    `)}`
-  );
+  const sourceList = [src, ...fallbackSrcs].filter(Boolean);
+
+  useEffect(() => {
+    setHasError(false);
+    setCurrentSrcIndex(0);
+  }, [src, JSON.stringify(fallbackSrcs)]);
 
   const handleError = () => {
-    if (!hasError) setHasError(true);
+    if (currentSrcIndex < sourceList.length - 1) {
+      setCurrentSrcIndex((prev) => prev + 1);
+      return;
+    }
+
+    if (!hasError) {
+      setHasError(true);
+    }
   };
 
-  if (hasError || !src) {
+  if (hasError || sourceList.length === 0) {
     return (
       <div
         className={`bg-gray-100 flex items-center justify-center ${className}`}
@@ -221,7 +227,7 @@ export function ProductImage({
 
   return (
     <img
-      src={src}
+      src={sourceList[currentSrcIndex]}
       alt={alt}
       className={className}
       onError={handleError}
