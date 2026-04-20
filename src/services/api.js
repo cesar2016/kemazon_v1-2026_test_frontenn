@@ -23,6 +23,82 @@ function resolveApiUrl() {
 }
 
 const API_URL = resolveApiUrl();
+const API_ORIGIN = (() => {
+  try {
+    return new URL(API_URL).origin;
+  } catch {
+    return '';
+  }
+})();
+
+const MEDIA_PATH_PATTERN = /^\/(storage|uploads|images)\//i;
+const ABSOLUTE_HTTP_PATTERN = /^https?:\/\//i;
+const MEDIA_FIELD_HINT = /(thumbnail|avatar|image|images|photo|picture|logo|banner|cover)/i;
+
+export function resolveMediaUrl(value) {
+  if (typeof value !== 'string' || value.length === 0) {
+    return value;
+  }
+
+  if (value.startsWith('data:image/')) {
+    return value;
+  }
+
+  if (MEDIA_PATH_PATTERN.test(value) && API_ORIGIN) {
+    return `${API_ORIGIN}${value}`;
+  }
+
+  if (!ABSOLUTE_HTTP_PATTERN.test(value)) {
+    return value;
+  }
+
+  try {
+    const url = new URL(value);
+
+    if (typeof window !== 'undefined' && window.location.protocol === 'https:' && url.protocol === 'http:') {
+      const apiHost = API_ORIGIN ? new URL(API_ORIGIN).hostname : null;
+      const isKnownBackendHost = apiHost && url.hostname === apiHost;
+      const isSameFrontendHost = url.hostname === window.location.hostname;
+
+      if (isKnownBackendHost || isSameFrontendHost) {
+        url.protocol = 'https:';
+        return url.toString();
+      }
+    }
+  } catch {
+    return value;
+  }
+
+  return value;
+}
+
+function normalizeMediaPayload(payload, parentKey = '') {
+  if (Array.isArray(payload)) {
+    if (MEDIA_FIELD_HINT.test(parentKey)) {
+      return payload.map((item) => (typeof item === 'string' ? resolveMediaUrl(item) : normalizeMediaPayload(item, parentKey)));
+    }
+
+    return payload.map((item) => normalizeMediaPayload(item, parentKey));
+  }
+
+  if (payload && typeof payload === 'object') {
+    return Object.fromEntries(
+      Object.entries(payload).map(([key, value]) => {
+        if (typeof value === 'string' && (MEDIA_FIELD_HINT.test(key) || MEDIA_PATH_PATTERN.test(value))) {
+          return [key, resolveMediaUrl(value)];
+        }
+
+        if (Array.isArray(value) || (value && typeof value === 'object')) {
+          return [key, normalizeMediaPayload(value, key)];
+        }
+
+        return [key, value];
+      })
+    );
+  }
+
+  return payload;
+}
 
 const api = axios.create({
   baseURL: API_URL,
@@ -41,7 +117,13 @@ api.interceptors.request.use((config) => {
 });
 
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    if (response?.data) {
+      response.data = normalizeMediaPayload(response.data);
+    }
+
+    return response;
+  },
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
