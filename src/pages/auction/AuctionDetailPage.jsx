@@ -16,7 +16,7 @@ import { LikersModal } from '../../components/product/LikersModal';
 import { SocialShareModal } from '../../components/share/SocialShareModal';
 import { useAuth } from '../../contexts/AuthContext';
 import { useAuctionRealtime } from '../../hooks/useAuctionRealtime';
-import { buildAuctionShareData } from '../../lib/share';
+import { buildAuctionShareData, buildPublicShareUrl } from '../../lib/share';
 import { toast } from 'sonner';
 
 /**
@@ -149,7 +149,9 @@ export function AuctionDetailPage() {
 
   const shareData = useMemo(() => {
     if (!product || !auction) return null;
-    const url = typeof window !== 'undefined' ? window.location.href : '';
+    const url = typeof window !== 'undefined'
+      ? buildPublicShareUrl(window.location.pathname, window.location.hash)
+      : '';
     return buildAuctionShareData(product, auction, url, images?.[0] || product.thumbnail || '');
   }, [auction, images, product]);
 

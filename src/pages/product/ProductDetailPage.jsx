@@ -15,7 +15,7 @@ import { Layout } from '../../components/layout';
 import { Button, Card, Badge, PriceFormatter, Spinner, CountdownTimer, Modal } from '../../components/ui';
 import { LikersModal } from '../../components/product/LikersModal';
 import { SocialShareModal } from '../../components/share/SocialShareModal';
-import { buildProductShareData } from '../../lib/share';
+import { buildProductShareData, buildPublicShareUrl } from '../../lib/share';
 import { toast } from 'sonner';
 
 /**
@@ -163,7 +163,9 @@ export function ProductDetailPage() {
 
   const shareData = useMemo(() => {
     if (!product) return null;
-    const url = typeof window !== 'undefined' ? window.location.href : '';
+    const url = typeof window !== 'undefined'
+      ? buildPublicShareUrl(window.location.pathname, window.location.hash)
+      : '';
     return buildProductShareData(product, url, images?.[0] || product.thumbnail || '');
   }, [images, product]);
 

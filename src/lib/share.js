@@ -31,6 +31,17 @@ function buildSalesPitch(name, description, cta) {
   return `✨ ${name}${teaserLine}\n${cta}`;
 }
 
+export function buildPublicShareUrl(pathname = '/', hash = '') {
+  const normalizedPath = pathname.startsWith('/') ? pathname : `/${pathname}`;
+  const cleanedHash = hash ? hash.replace(/^#/, '') : normalizedPath;
+
+  if (cleanedHash.startsWith('/')) {
+    return `https://kemazon.ar/#${cleanedHash}`;
+  }
+
+  return `https://kemazon.ar/#/${cleanedHash}`;
+}
+
 export function buildProductShareData(product, url, imageUrl) {
   const name = product?.name || 'Producto destacado';
   const price = formatCurrency(product?.price);
@@ -84,8 +95,6 @@ export function buildProductShareData(product, url, imageUrl) {
     linkedinText: `${name} - ${price}. ${description || cta}`,
     telegramText: `${shareSummary}\n${price}`,
     nativeText: copyText,
-    copyButtonLabel: 'Copiar mensaje vendedor',
-    captionButtonLabel: 'Copiar caption para Instagram/TikTok',
   };
 }
 
@@ -145,7 +154,5 @@ export function buildAuctionShareData(product, auction, url, imageUrl) {
     linkedinText: `${name} - ${currentPrice}. ${cta}`,
     telegramText: `${shareSummary}\n${currentPrice}`,
     nativeText: copyText,
-    copyButtonLabel: 'Copiar mensaje de subasta',
-    captionButtonLabel: 'Copiar caption para Instagram/TikTok',
   };
 }

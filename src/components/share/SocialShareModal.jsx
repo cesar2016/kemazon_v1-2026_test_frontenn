@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Camera, Copy, Mail, Send, Share2, Smartphone } from 'lucide-react';
-import { Modal, Button, Badge } from '../ui';
+import { Camera, Mail, Send, Smartphone } from 'lucide-react';
+import { Modal, Badge } from '../ui';
 import { toast } from 'sonner';
 
 function BrandIcon({ children, className }) {
@@ -92,18 +92,15 @@ export function SocialShareModal({ isOpen, onClose, shareData }) {
   const shareUrls = buildShareUrls(shareData);
   const supportsNativeShare = typeof navigator !== 'undefined' && typeof navigator.share === 'function';
 
-  const handleCopy = async (text, successMessage) => {
-    try {
-      await copyTextToClipboard(text);
-      toast.success(successMessage);
-    } catch (error) {
-      toast.error('No se pudo copiar el texto');
-    }
-  };
-
   const handleNativeShare = async () => {
     if (!supportsNativeShare) {
-      await handleCopy(shareData.copyText, 'Mensaje copiado para compartir');
+      try {
+        await copyTextToClipboard(shareData.copyText);
+        window.open(shareUrls.whatsapp, '_blank', 'noopener,noreferrer');
+        toast.success('Se copió el mensaje y se abrió WhatsApp para compartir');
+      } catch (error) {
+        toast.error('No se pudo preparar el contenido para compartir');
+      }
       return;
     }
 
@@ -177,8 +174,8 @@ export function SocialShareModal({ isOpen, onClose, shareData }) {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <SocialButton
             onClick={handleNativeShare}
-            label="Compartir con imagen"
-            subtitle={supportsNativeShare ? 'Usa el menú nativo del celular o navegador' : 'Si no está disponible, copia el mensaje listo'}
+            label="Compartir"
+            subtitle={supportsNativeShare ? 'Comparte imagen + texto promocional juntos' : 'Prepara el texto y abre WhatsApp con tu miniatura pública'}
             className="bg-gradient-to-r from-primary-50 to-primary-100 hover:from-primary-100 hover:to-blue-100 border border-primary-200"
             icon={(
               <BrandIcon className="bg-primary-600 text-white">
@@ -187,20 +184,9 @@ export function SocialShareModal({ isOpen, onClose, shareData }) {
             )}
           />
           <SocialButton
-            onClick={() => handleCopy(shareData.copyText, 'Mensaje vendedor copiado')}
-            label={shareData.copyButtonLabel}
-            subtitle="Incluye precio, gancho comercial y enlace"
-            className="bg-gray-50 hover:bg-gray-100 border border-gray-200"
-            icon={(
-              <BrandIcon className="bg-gray-900 text-white">
-                <Copy className="w-5 h-5" />
-              </BrandIcon>
-            )}
-          />
-          <SocialButton
             href={shareUrls.whatsapp}
             label="WhatsApp"
-            subtitle="Abre un mensaje listo para enviar"
+            subtitle="Comparte el texto y previsualiza desde kemazon.ar"
             className="bg-green-50 hover:bg-green-100 border border-green-200"
             icon={(
               <BrandIcon className="bg-green-500 text-white">
@@ -211,7 +197,7 @@ export function SocialShareModal({ isOpen, onClose, shareData }) {
           <SocialButton
             href={shareUrls.facebook}
             label="Facebook"
-            subtitle="Comparte el enlace con texto promocional"
+            subtitle="Usa el enlace público con miniatura y copy"
             className="bg-blue-50 hover:bg-blue-100 border border-blue-200"
             icon={(
               <BrandIcon className="bg-blue-600 text-white">
@@ -222,7 +208,7 @@ export function SocialShareModal({ isOpen, onClose, shareData }) {
           <SocialButton
             href={shareUrls.x}
             label="X"
-            subtitle="Publica un post corto con gancho comercial"
+            subtitle="Publica el texto promocional con vista previa"
             className="bg-gray-50 hover:bg-gray-100 border border-gray-200"
             icon={(
               <BrandIcon className="bg-gray-900 text-white">
@@ -233,7 +219,7 @@ export function SocialShareModal({ isOpen, onClose, shareData }) {
           <SocialButton
             href={shareUrls.telegram}
             label="Telegram"
-            subtitle="Envía texto vendedor y el enlace"
+            subtitle="Envía el texto con tu enlace público"
             className="bg-sky-50 hover:bg-sky-100 border border-sky-200"
             icon={(
               <BrandIcon className="bg-sky-500 text-white">
@@ -244,7 +230,7 @@ export function SocialShareModal({ isOpen, onClose, shareData }) {
           <SocialButton
             href={shareUrls.linkedin}
             label="LinkedIn"
-            subtitle="Comparte la publicación en un formato más profesional"
+            subtitle="Comparte la publicación con preview profesional"
             className="bg-indigo-50 hover:bg-indigo-100 border border-indigo-200"
             icon={(
               <BrandIcon className="bg-indigo-700 text-white">
@@ -255,7 +241,7 @@ export function SocialShareModal({ isOpen, onClose, shareData }) {
           <SocialButton
             href={shareUrls.email}
             label="Email"
-            subtitle="Abre un mail con asunto y mensaje listos"
+            subtitle="Abre un mail con asunto, texto y enlace"
             className="bg-amber-50 hover:bg-amber-100 border border-amber-200"
             icon={(
               <BrandIcon className="bg-amber-500 text-white">
@@ -263,43 +249,11 @@ export function SocialShareModal({ isOpen, onClose, shareData }) {
               </BrandIcon>
             )}
           />
-          <SocialButton
-            onClick={() => handleCopy(shareData.instagramCaption, 'Caption copiado para Instagram o TikTok')}
-            label={shareData.captionButtonLabel}
-            subtitle="Pegalo junto al link y la imagen"
-            className="bg-pink-50 hover:bg-pink-100 border border-pink-200"
-            icon={(
-              <BrandIcon className="bg-gradient-to-br from-pink-500 via-rose-500 to-orange-400 text-white">
-                <Share2 className="w-5 h-5" />
-              </BrandIcon>
-            )}
-          />
         </div>
 
-        <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4 space-y-3">
-          <p className="text-xs font-black uppercase tracking-widest text-gray-500">Mensaje listo para compartir</p>
-          <div className="max-h-40 overflow-y-auto rounded-xl bg-white p-4 border border-gray-200">
-            <pre className="whitespace-pre-wrap text-sm leading-relaxed text-gray-700 font-sans">{shareData.copyText}</pre>
-          </div>
-          <div className="flex gap-3">
-            <Button
-              variant="primary"
-              className="flex-1"
-              onClick={() => handleCopy(shareData.copyText, 'Mensaje listo copiado')}
-            >
-              <Copy className="w-4 h-4 mr-2" />
-              Copiar texto
-            </Button>
-            <Button
-              variant="secondary"
-              className="flex-1"
-              onClick={() => handleCopy(shareData.url, 'Enlace copiado')}
-              disabled={isNativeSharing}
-            >
-              <Share2 className="w-4 h-4 mr-2" />
-              Copiar link
-            </Button>
-          </div>
+        <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4">
+          <p className="text-xs font-black uppercase tracking-widest text-gray-500 mb-3">Contenido que se comparte</p>
+          <pre className="whitespace-pre-wrap text-sm leading-relaxed text-gray-700 font-sans">{shareData.copyText}</pre>
         </div>
       </div>
     </Modal>
