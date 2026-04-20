@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { ArrowLeft, Save, AlertCircle, Calendar } from 'lucide-react';
 import { productService, categoryService, auctionService } from '../../services/api';
 import { Layout } from '../../components/layout';
-import { Button, Input, Card } from '../../components/ui';
+import { Button, Input, Card, Modal, Spinner } from '../../components/ui';
 import { ImageUpload } from '../../components/ui/ImageUpload';
 import { toast } from 'sonner';
 
@@ -36,6 +36,8 @@ export function ProductFormPage() {
   });
 
   const [loading, setLoading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadStage, setUploadStage] = useState('');
   const [errors, setErrors] = useState({});
 
   const { data: productData } = useQuery({
@@ -189,6 +191,8 @@ export function ProductFormPage() {
     }
 
     setLoading(true);
+    setUploadProgress(0);
+    setUploadStage(isEditing ? 'Actualizando producto...' : 'Creando producto...');
 
     try {
       const imageUrls = images.map(img => img.url);
@@ -208,18 +212,29 @@ export function ProductFormPage() {
       };
 
       let productId;
+      const requestConfig = {
+        timeout: 120000,
+        onUploadProgress: (progressEvent) => {
+          if (!progressEvent.total) return;
+          const percent = Math.min(95, Math.round((progressEvent.loaded * 100) / progressEvent.total));
+          setUploadProgress(percent);
+        },
+      };
 
       if (isEditing) {
-        await productService.update(id, productData);
+        await productService.update(id, productData, requestConfig);
         productId = id;
+        setUploadProgress(100);
         toast.success('Producto actualizado');
       } else {
-        const response = await productService.create(productData);
+        const response = await productService.create(productData, requestConfig);
         productId = response.data.product.id;
+        setUploadProgress(form.type === 'auction' ? 90 : 100);
         toast.success('Producto creado');
       }
 
       if (form.type === 'auction' && !isEditing) {
+        setUploadStage('Creando subasta...');
         await auctionService.create({
           product_id: productId,
           starting_price: parseFloat(auctionSettings.starting_price),
@@ -229,6 +244,7 @@ export function ProductFormPage() {
           ends_at: new Date(auctionSettings.ends_at).toISOString(),
           has_reserve: auctionSettings.has_reserve,
         });
+        setUploadProgress(100);
         toast.success('Subasta creada');
       }
 
@@ -495,6 +511,38 @@ export function ProductFormPage() {
           </div>
         </form>
       </div>
+      <Modal
+        isOpen={loading}
+        onClose={() => {}}
+        title={isEditing ? 'Actualizando producto' : 'Creando producto'}
+        size="sm"
+        closeOnBackdrop={false}
+        showCloseButton={false}
+      >
+        <div className="space-y-5">
+          <div className="flex items-center justify-center">
+            <Spinner size="lg" />
+          </div>
+          <div className="text-center">
+            <p className="text-base font-semibold text-gray-900">{uploadStage || 'Preparando contenido...'}</p>
+            <p className="mt-1 text-sm text-gray-500">
+              No cierres esta ventana mientras terminamos de guardar las imágenes y datos del producto.
+            </p>
+          </div>
+          <div className="space-y-2">
+            <div className="h-3 w-full rounded-full bg-gray-100 overflow-hidden">
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-primary-500 to-primary-600 transition-all duration-300"
+                style={{ width: `${Math.max(uploadProgress, 8)}%` }}
+              />
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-gray-500">Progreso de guardado</span>
+              <span className="font-semibold text-primary-700">{Math.max(uploadProgress, 8)}%</span>
+            </div>
+          </div>
+        </div>
+      </Modal>
     </Layout>
   );
 }

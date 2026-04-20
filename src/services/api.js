@@ -5,6 +5,10 @@ const REMOTE_API_URL = 'https://kemazonv1-2026testbackenn-production.up.railway.
 const LOCAL_API_URL = 'http://127.0.0.1:8000/api';
 
 function isLocalEnvironment() {
+  if (import.meta.env.DEV) {
+    return true;
+  }
+
   if (typeof window === 'undefined') {
     return import.meta.env.DEV;
   }
@@ -12,10 +16,27 @@ function isLocalEnvironment() {
   return ['localhost', '127.0.0.1'].includes(window.location.hostname);
 }
 
+function isLocalApiUrl(url) {
+  if (!url) return false;
+  if (url.startsWith('/')) return true;
+
+  try {
+    const parsed = new URL(url);
+    return ['localhost', '127.0.0.1'].includes(parsed.hostname);
+  } catch {
+    return false;
+  }
+}
+
 function resolveApiUrl() {
   const configuredUrl = import.meta.env.VITE_API_URL?.trim();
+  const forceRemoteInDev = import.meta.env.VITE_USE_REMOTE_API === 'true';
 
   if (configuredUrl) {
+    if (import.meta.env.DEV && !forceRemoteInDev && !isLocalApiUrl(configuredUrl)) {
+      return LOCAL_API_URL;
+    }
+
     return configuredUrl.replace(/\/$/, '');
   }
 
@@ -164,8 +185,8 @@ export const productService = {
   getById: (id) => api.get(`/seller/products/${id}`),
   search: (query) => api.get(`/products/search/${query}`),
   getMyProducts: (params) => api.get('/seller/products', { params }),
-  create: (data) => api.post('/seller/products', data),
-  update: (id, data) => api.put(`/seller/products/${id}`, data),
+  create: (data, config = {}) => api.post('/seller/products', data, config),
+  update: (id, data, config = {}) => api.put(`/seller/products/${id}`, data, config),
   delete: (id) => api.delete(`/seller/products/${id}`),
   toggleLike: (productId) => api.post(`/products/${productId}/like`),
   getLikers: (productId) => api.get(`/products/${productId}/likers`),

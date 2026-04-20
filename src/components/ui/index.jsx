@@ -120,7 +120,15 @@ export function Card({ children, className = '', variant = 'default', hover = fa
   );
 }
 
-export function Modal({ isOpen, onClose, title, children, size = 'md' }) {
+export function Modal({
+  isOpen,
+  onClose,
+  title,
+  children,
+  size = 'md',
+  closeOnBackdrop = true,
+  showCloseButton = true,
+}) {
   if (!isOpen) return null;
 
   const sizes = {
@@ -133,16 +141,21 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }) {
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="flex min-h-full items-center justify-center p-4">
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-md" onClick={onClose} />
+        <div
+          className="fixed inset-0 bg-black/40 backdrop-blur-md"
+          onClick={closeOnBackdrop ? onClose : undefined}
+        />
         <div className={`relative glass rounded-3xl shadow-2xl w-full ${sizes[size]} p-6 animate-fade-in border border-white/50`}>
-          <button
-            onClick={onClose}
-            className="absolute top-4 right-4 text-gray-500 hover:text-primary-600 transition-colors bg-white/50 p-2 rounded-full backdrop-blur-sm"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+          {showCloseButton && (
+            <button
+              onClick={onClose}
+              className="absolute top-4 right-4 text-gray-500 hover:text-primary-600 transition-colors bg-white/50 p-2 rounded-full backdrop-blur-sm"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          )}
           {title && <h2 className="text-2xl font-black text-gray-900 mb-6 tracking-tight">{title}</h2>}
           {children}
         </div>

@@ -31,7 +31,6 @@ function ProductCard({ product }) {
           src={product.thumbnail}
           fallbackSrcs={[
             product.images?.[0],
-            'https://via.placeholder.com/400x400?text=Kemazon',
           ]}
           alt={product.name}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
@@ -196,7 +195,6 @@ export function HomePage() {
                       src={auction.product?.thumbnail}
                       fallbackSrcs={[
                         auction.product?.images?.[0],
-                        'https://via.placeholder.com/400x400?text=Kemazon',
                       ]}
                       alt={auction.product?.name}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
