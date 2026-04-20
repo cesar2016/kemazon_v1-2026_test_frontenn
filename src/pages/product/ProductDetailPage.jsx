@@ -614,14 +614,14 @@ export function ProductDetailPage() {
       <LikersModal
         isOpen={isLikersModalOpen}
         onClose={() => setIsLikersModalOpen(false)}
-        likers={likersData?.data?.likers || []}
+        likers={likersData?.data?.likers || likersData?.likers || []}
         isLoading={isLoadingLikers}
       />
 
       <LikersModal
         isOpen={isVisitorsModalOpen}
         onClose={() => setIsVisitorsModalOpen(false)}
-        likers={visitorsData?.data?.visitors || []}
+        likers={visitorsData?.data?.visitors || visitorsData?.visitors || []}
         isLoading={isLoadingVisitors}
         title="Visitantes del Producto"
         emptyMessage="Aún no hay visitas registradas."

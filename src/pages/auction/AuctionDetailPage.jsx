@@ -145,8 +145,9 @@ export function AuctionDetailPage() {
   });
 
   useEffect(() => {
-    if (likersData?.data?.likers && user?.id) {
-      const hasLiked = likersData.data.likers.some(liker => String(liker.id) === String(user.id));
+    const likers = likersData?.data?.likers || likersData?.likers || [];
+    if (likers.length > 0 && user?.id) {
+      const hasLiked = likers.some(liker => String(liker.id) === String(user.id));
       setIsLiked(hasLiked);
     } else if (product?.is_liked !== undefined) {
       setIsLiked(product.is_liked);
@@ -721,14 +722,14 @@ export function AuctionDetailPage() {
       <LikersModal
         isOpen={isLikersModalOpen}
         onClose={() => setIsLikersModalOpen(false)}
-        likers={likersData?.data?.likers || []}
+        likers={likersData?.data?.likers || likersData?.likers || []}
         isLoading={isLoadingLikers}
         title="A quienes les gusta este producto"
       />
       <LikersModal
         isOpen={isVisitorsModalOpen}
         onClose={() => setIsVisitorsModalOpen(false)}
-        likers={visitorsData?.data?.visitors || []}
+        likers={visitorsData?.data?.visitors || visitorsData?.visitors || []}
         isLoading={isLoadingVisitors}
         title="Visitas del producto"
         emptyMessage="Aún no hay visitas registradas."
