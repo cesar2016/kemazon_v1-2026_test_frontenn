@@ -205,50 +205,7 @@ export function SocialShareModal({ isOpen, onClose, shareData }) {
               </BrandIcon>
             )}
           />
-          <SocialButton
-            href={shareUrls.x}
-            label="X"
-            subtitle="Publica el texto promocional con vista previa"
-            className="bg-gray-50 hover:bg-gray-100 border border-gray-200"
-            icon={(
-              <BrandIcon className="bg-gray-900 text-white">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26L22.827 21.75H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-              </BrandIcon>
-            )}
-          />
-          <SocialButton
-            href={shareUrls.telegram}
-            label="Telegram"
-            subtitle="Envía el texto con tu enlace público"
-            className="bg-sky-50 hover:bg-sky-100 border border-sky-200"
-            icon={(
-              <BrandIcon className="bg-sky-500 text-white">
-                <Send className="w-5 h-5" />
-              </BrandIcon>
-            )}
-          />
-          <SocialButton
-            href={shareUrls.linkedin}
-            label="LinkedIn"
-            subtitle="Comparte la publicación con preview profesional"
-            className="bg-indigo-50 hover:bg-indigo-100 border border-indigo-200"
-            icon={(
-              <BrandIcon className="bg-indigo-700 text-white">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-              </BrandIcon>
-            )}
-          />
-          <SocialButton
-            href={shareUrls.email}
-            label="Email"
-            subtitle="Abre un mail con asunto, texto y enlace"
-            className="bg-amber-50 hover:bg-amber-100 border border-amber-200"
-            icon={(
-              <BrandIcon className="bg-amber-500 text-white">
-                <Mail className="w-5 h-5" />
-              </BrandIcon>
-            )}
-          />
+          
         </div>
 
         <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4">
