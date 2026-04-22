@@ -222,50 +222,6 @@ export function AuctionDetailPage() {
     retryOnMount: false,
   });
 
-  const {
-    data: likersData,
-    isFetching: isLoadingLikers,
-    refetch: refetchLikers,
-  } = useQuery({
-    queryKey: ['auction-product-likers', product?.id],
-    enabled: false,
-    queryFn: async () => {
-      console.info('[AuctionDetailPage] fetching likers', {
-        productId: product?.id,
-        slug,
-      });
-      const response = await productService.getLikers(product.id);
-      console.info('[AuctionDetailPage] likers fetched', {
-        productId: product?.id,
-        count: response?.data?.count ?? response?.data?.likers?.length ?? 0,
-        likers: response?.data?.likers ?? [],
-      });
-      return response;
-    },
-  });
-
-  const {
-    data: visitorsData,
-    isFetching: isLoadingVisitors,
-    refetch: refetchVisitors,
-  } = useQuery({
-    queryKey: ['auction-product-visitors', product?.id],
-    enabled: false,
-    queryFn: async () => {
-      console.info('[AuctionDetailPage] fetching visitors', {
-        productId: product?.id,
-        slug,
-      });
-      const response = await productService.getVisitors(product.id);
-      console.info('[AuctionDetailPage] visitors fetched', {
-        productId: product?.id,
-        count: response?.data?.count ?? response?.data?.visitors?.length ?? 0,
-        visitors: response?.data?.visitors ?? [],
-      });
-      return response;
-    },
-  });
-
   // Track visits on mount
   useEffect(() => {
     if (product?.id) {
