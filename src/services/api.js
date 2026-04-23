@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { toast } from 'sonner';
 
-const REMOTE_API_URL = 'https://kemazonv1-2026testbackenn-production.up.railway.app/api';
+const REMOTE_API_URL = 'https://kemazon-v1-2016-kmz-v1-backend.qiaz7f.easypanel.host/api';
 const LOCAL_API_URL = 'http://127.0.0.1:8000/api';
 
 function isLocalEnvironment() {

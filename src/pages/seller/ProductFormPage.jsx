@@ -212,6 +212,12 @@ export function ProductFormPage() {
         is_active: form.is_active,
       };
 
+      console.log('[ProductFormPage] Submitting product data:', {
+        ...productData,
+        images: `${imageUrls.length} images`,
+        thumbnail: thumbnail,
+      });
+
       let productId;
       const requestConfig = {
         timeout: 120000,
