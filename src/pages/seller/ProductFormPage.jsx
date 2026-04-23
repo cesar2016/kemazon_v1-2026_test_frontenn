@@ -61,9 +61,10 @@ export function ProductFormPage() {
       });
       
       if (product.images && product.images.length > 0) {
-        setImages(product.images.map((url, index) => ({
+        const thumbnailUrl = product.thumbnail || product.images[0];
+        setImages(product.images.map((url) => ({
           url,
-          isPrimary: index === 0,
+          isPrimary: url === thumbnailUrl,
         })));
       }
 
