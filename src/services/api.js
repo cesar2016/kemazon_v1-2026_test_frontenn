@@ -152,10 +152,19 @@ api.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    const message = error.response?.data?.message ||
-      (error.response?.data?.errors
-        ? Object.values(error.response.data.errors).flat().join(', ')
-        : 'Ha ocurrido un error');
+    let message;
+    if (error.code === 'ECONNABORTED') {
+      message = 'La solicitud está tardando más de lo normal. Verifica tu conexión a internet e intenta de nuevo.';
+    } else if (error.code === 'ERR_NETWORK' || error.message === 'Network Error') {
+      message = 'Error de conexión. Verifica tu conexión a internet e intenta de nuevo.';
+    } else if (error.response?.status === 0 || !error.response) {
+      message = 'No se pudo conectar al servidor. Verifica tu conexión a internet.';
+    } else {
+      message = error.response?.data?.message ||
+        (error.response?.data?.errors
+          ? Object.values(error.response.data.errors).flat().join(', ')
+          : 'Ha ocurrido un error');
+    }
 
     if (error.response?.status !== 401) {
       toast.error(message);

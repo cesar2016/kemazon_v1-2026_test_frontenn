@@ -220,7 +220,7 @@ export function ProductFormPage() {
 
       let productId;
       const requestConfig = {
-        timeout: 30000,
+        timeout: 60000,
         onUploadProgress: (progressEvent) => {
           if (!progressEvent.total) return;
           const percent = Math.min(95, Math.round((progressEvent.loaded * 100) / progressEvent.total));
