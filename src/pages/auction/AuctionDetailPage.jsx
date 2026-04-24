@@ -175,7 +175,7 @@ export function AuctionDetailPage() {
     const url = typeof window !== 'undefined'
       ? buildPublicShareUrl(window.location.pathname, window.location.hash)
       : '';
-    return buildAuctionShareData(product, auction, url, images?.[0] || product.thumbnail || '');
+    return buildAuctionShareData(product, auction, url, product.thumbnail || images?.[0] || '');
   }, [auction, images, product]);
 
   const placeBidMutation = useMutation({
@@ -338,7 +338,7 @@ export function AuctionDetailPage() {
         <meta name="description" content={shareData?.shareSummary || product?.description?.substring(0, 160) || 'Participa en esta subasta en KEMAZON.ar - La mejor plataforma de subastas de Argentina.'} />
         <meta property="og:title" content={(product?.name || 'Subasta') + ' | KEMAZON.ar'} />
         <meta property="og:description" content={shareData?.shareSummary || product?.description?.substring(0, 160) || 'Participa en esta subasta'} />
-        <meta property="og:image" content={images?.[0] || ''} />
+        <meta property="og:image" content={product?.thumbnail || images?.[0] || ''} />
         <meta property="og:url" content={window.location.href} />
         <meta property="og:type" content="product" />
       </Helmet>

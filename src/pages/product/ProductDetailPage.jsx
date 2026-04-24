@@ -166,7 +166,7 @@ export function ProductDetailPage() {
     const url = typeof window !== 'undefined'
       ? buildPublicShareUrl(window.location.pathname, window.location.hash)
       : '';
-    return buildProductShareData(product, url, images?.[0] || product.thumbnail || '');
+    return buildProductShareData(product, url, product.thumbnail || images?.[0] || '');
   }, [images, product]);
 
   const handleAddToCart = async () => {
@@ -227,7 +227,7 @@ export function ProductDetailPage() {
         <meta name="description" content={shareData?.shareSummary || product?.description?.substring(0, 160) || 'Compra este producto en KEMAZON.ar - La mejor plataforma de e-commerce de Argentina.'} />
         <meta property="og:title" content={product?.name + ' | KEMAZON.ar'} />
         <meta property="og:description" content={shareData?.shareSummary || product?.description?.substring(0, 160) || 'Compra este producto en KEMAZON.ar'} />
-        <meta property="og:image" content={images?.[0] || ''} />
+        <meta property="og:image" content={product?.thumbnail || images?.[0] || ''} />
         <meta property="og:url" content={window.location.href} />
         <meta property="og:type" content="product" />
       </Helmet>
