@@ -173,7 +173,7 @@ export function AuctionDetailPage() {
   const shareData = useMemo(() => {
     if (!product || !auction) return null;
     const url = typeof window !== 'undefined'
-      ? buildPublicShareUrl(window.location.pathname, window.location.hash)
+      ? buildPublicShareUrl(window.location.pathname)
       : '';
     return buildAuctionShareData(product, auction, url, product.thumbnail || images?.[0] || '');
   }, [auction, images, product]);

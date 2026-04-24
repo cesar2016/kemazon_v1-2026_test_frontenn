@@ -31,15 +31,13 @@ function buildSalesPitch(name, description, cta) {
   return `✨ ${name}${teaserLine}\n${cta}`;
 }
 
+const FRONTEND_URL = import.meta.env.VITE_FRONTEND_URL || 'https://kemazon.ar';
+
 export function buildPublicShareUrl(pathname = '/', hash = '') {
   const normalizedPath = pathname.startsWith('/') ? pathname : `/${pathname}`;
-  const cleanedHash = hash ? hash.replace(/^#/, '') : normalizedPath;
+  const cleanedPath = normalizedPath.replace(/^#\/?/, '');
 
-  if (cleanedHash.startsWith('/')) {
-    return `https://kemazon.ar/#${cleanedHash}`;
-  }
-
-  return `https://kemazon.ar/#/${cleanedHash}`;
+  return `${FRONTEND_URL}${cleanedPath}`;
 }
 
 export function buildProductShareData(product, url, imageUrl) {

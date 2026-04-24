@@ -164,7 +164,7 @@ export function ProductDetailPage() {
   const shareData = useMemo(() => {
     if (!product) return null;
     const url = typeof window !== 'undefined'
-      ? buildPublicShareUrl(window.location.pathname, window.location.hash)
+      ? buildPublicShareUrl(window.location.pathname)
       : '';
     return buildProductShareData(product, url, product.thumbnail || images?.[0] || '');
   }, [images, product]);
