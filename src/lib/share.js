@@ -8,6 +8,75 @@ function formatCurrency(value) {
   }).format(amount);
 }
 
+export async function convertBase64ToBlob(base64String, maxWidth = 1200, maxHeight = 630, format = 'jpeg') {
+  return new Promise((resolve, reject) => {
+    if (!base64String || typeof base64String !== 'string') {
+      resolve(null);
+      return;
+    }
+
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      let width = img.width;
+      let height = img.height;
+
+      if (width > maxWidth || height > maxHeight) {
+        const ratio = Math.min(maxWidth / width, maxHeight / height);
+        width = Math.round(width * ratio);
+        height = Math.round(height * ratio);
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, width, height);
+      ctx.drawImage(img, 0, 0, width, height);
+
+      const mimeType = format === 'webp' ? 'image/webp' : 'image/jpeg';
+      const quality = format === 'webp' ? 0.85 : 0.85;
+      
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            resolve(blob);
+          } else {
+            resolve(null);
+          }
+        },
+        mimeType,
+        quality
+      );
+    };
+
+    img.onerror = () => {
+      resolve(null);
+    };
+
+    if (base64String.startsWith('data:')) {
+      img.src = base64String;
+    } else if (base64String.startsWith('http')) {
+      img.src = base64String;
+    } else {
+      img.src = `data:image/jpeg;base64,${base64String}`;
+    }
+  });
+}
+
+export function extractBase64FromUrl(url) {
+  if (!url) return null;
+  
+  if (url.startsWith('data:image')) {
+    return url;
+  }
+  
+  return null;
+}
+
 function truncateText(text, maxLength) {
   if (!text) return '';
   if (text.length <= maxLength) return text;

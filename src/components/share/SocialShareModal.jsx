@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Camera, Mail, Send, Smartphone } from 'lucide-react';
 import { Modal, Badge } from '../ui';
 import { toast } from 'sonner';
+import { convertBase64ToBlob } from '../../lib/share';
 
 function BrandIcon({ children, className }) {
   return (
@@ -51,12 +52,22 @@ function buildShareUrls(shareData) {
 async function fetchImageFile(imageUrl, fileBaseName) {
   if (!imageUrl) return null;
 
+  let blob;
+
+  if (imageUrl.startsWith('data:image')) {
+    blob = await convertBase64ToBlob(imageUrl, 1200, 630, 'jpeg');
+    if (!blob) {
+      throw new Error('No se pudo procesar la imagen base64');
+    }
+    return new File([blob], `${fileBaseName}.jpg`, { type: 'image/jpeg' });
+  }
+
   const response = await fetch(imageUrl);
   if (!response.ok) {
     throw new Error(`No se pudo descargar la miniatura (${response.status})`);
   }
 
-  const blob = await response.blob();
+  blob = await response.blob();
   const extension = blob.type.split('/')[1] || 'jpg';
   return new File([blob], `${fileBaseName}.${extension}`, { type: blob.type || 'image/jpeg' });
 }
