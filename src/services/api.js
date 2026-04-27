@@ -276,4 +276,8 @@ export const adminService = {
   broadcastNotification: (data) => api.post('/admin/notifications/broadcast', data),
 };
 
+export function getProductImageUrl(slugOrId) {
+  return `${API_URL}/products/image/${slugOrId}`;
+}
+
 export default api;

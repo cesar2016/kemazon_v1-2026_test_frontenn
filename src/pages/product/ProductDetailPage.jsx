@@ -8,7 +8,7 @@ import {
   ZoomIn, CreditCard, Package, Check, Trophy, Gavel,
   ArrowLeft, Info, MapPin, Zap
 } from 'lucide-react';
-import { productService, auctionService } from '../../services/api';
+import { productService, auctionService, getProductImageUrl } from '../../services/api';
 import { useCart } from '../../contexts/CartContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { Layout } from '../../components/layout';
@@ -166,7 +166,8 @@ export function ProductDetailPage() {
     const url = typeof window !== 'undefined'
       ? buildPublicShareUrl(window.location.pathname)
       : '';
-    return buildProductShareData(product, url, product.thumbnail || images?.[0] || '');
+    const imageUrl = product?.slug ? getProductImageUrl(product.slug) : (product.thumbnail || images?.[0] || '');
+    return buildProductShareData(product, url, imageUrl);
   }, [images, product]);
 
   const handleAddToCart = async () => {
@@ -227,7 +228,7 @@ export function ProductDetailPage() {
         <meta name="description" content={shareData?.shareSummary || product?.description?.substring(0, 160) || 'Compra este producto en KEMAZON.ar - La mejor plataforma de e-commerce de Argentina.'} />
         <meta property="og:title" content={product?.name + ' | KEMAZON.ar'} />
         <meta property="og:description" content={shareData?.shareSummary || product?.description?.substring(0, 160) || 'Compra este producto en KEMAZON.ar'} />
-        <meta property="og:image" content={product?.thumbnail || images?.[0] || ''} />
+        <meta property="og:image" content={product?.slug ? getProductImageUrl(product.slug) : (product?.thumbnail || images?.[0] || '')} />
         <meta property="og:url" content={window.location.href} />
         <meta property="og:type" content="product" />
       </Helmet>

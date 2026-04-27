@@ -9,7 +9,7 @@ import {
   RotateCcw, CreditCard, Check, Clock, Heart,
   Eye, History, User, Sparkles, X
 } from 'lucide-react';
-import { auctionService, productService } from '../../services/api';
+import { auctionService, productService, getProductImageUrl } from '../../services/api';
 import { Layout } from '../../components/layout';
 import { Card, Badge, PriceFormatter, Spinner, Button, CountdownTimer, Modal } from '../../components/ui';
 import { LikersModal } from '../../components/product/LikersModal';
@@ -175,7 +175,8 @@ export function AuctionDetailPage() {
     const url = typeof window !== 'undefined'
       ? buildPublicShareUrl(window.location.pathname)
       : '';
-    return buildAuctionShareData(product, auction, url, product.thumbnail || images?.[0] || '');
+    const imageUrl = product?.slug ? getProductImageUrl(product.slug) : (product.thumbnail || images?.[0] || '');
+    return buildAuctionShareData(product, auction, url, imageUrl);
   }, [auction, images, product]);
 
   const placeBidMutation = useMutation({
@@ -338,7 +339,7 @@ export function AuctionDetailPage() {
         <meta name="description" content={shareData?.shareSummary || product?.description?.substring(0, 160) || 'Participa en esta subasta en KEMAZON.ar - La mejor plataforma de subastas de Argentina.'} />
         <meta property="og:title" content={(product?.name || 'Subasta') + ' | KEMAZON.ar'} />
         <meta property="og:description" content={shareData?.shareSummary || product?.description?.substring(0, 160) || 'Participa en esta subasta'} />
-        <meta property="og:image" content={product?.thumbnail || images?.[0] || ''} />
+        <meta property="og:image" content={product?.slug ? getProductImageUrl(product.slug) : (product?.thumbnail || images?.[0] || '')} />
         <meta property="og:url" content={window.location.href} />
         <meta property="og:type" content="product" />
       </Helmet>
