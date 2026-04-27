@@ -121,6 +121,7 @@ export function buildProductShareData(product, url, imageUrl) {
 
   const shareTitle = `${name} | KEMAZON.ar`;
   const shareSummary = buildSalesPitch(name, description, cta);
+  
   const copyText = [
     `🔥 ${name}`,
     '',
@@ -129,6 +130,7 @@ export function buildProductShareData(product, url, imageUrl) {
     `🚀 ${cta}`,
     '',
     `🔗 ${url}`,
+    imageUrl && !imageUrl.startsWith('data:') ? `📷 Ver imagen: ${imageUrl}` : null,
   ].filter(Boolean).join('\n');
 
   const instagramCaption = [
@@ -187,6 +189,7 @@ export function buildAuctionShareData(product, auction, url, imageUrl) {
     description ? `📝 ${description}` : null,
     '',
     `🔗 ${url}`,
+    imageUrl && !imageUrl.startsWith('data:') ? `📷 Ver imagen: ${imageUrl}` : null,
   ].filter(Boolean).join('\n');
 
   const socialCaption = [
