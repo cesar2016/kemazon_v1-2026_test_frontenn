@@ -61,6 +61,7 @@ export function resolveMediaUrl(value) {
     return value;
   }
 
+  // No transformar data:image (ya está en el formato correcto)
   if (value.startsWith('data:image/')) {
     return value;
   }
@@ -105,6 +106,11 @@ function normalizeMediaPayload(payload, parentKey = '') {
   if (payload && typeof payload === 'object') {
     return Object.fromEntries(
       Object.entries(payload).map(([key, value]) => {
+        // No transformar data:image en request (solo en response)
+        if (typeof value === 'string' && value.startsWith('data:image/')) {
+          return [key, value];
+        }
+        
         if (typeof value === 'string' && (MEDIA_FIELD_HINT.test(key) || MEDIA_PATH_PATTERN.test(value))) {
           return [key, resolveMediaUrl(value)];
         }
