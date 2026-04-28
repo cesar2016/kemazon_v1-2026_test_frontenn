@@ -15,6 +15,20 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      (function() {
+        var path = window.location.pathname;
+        var crawlerPattern = /facebookexternalhit|whatsapp|twitter|linkedin|google|bot|crawler|spider/i;
+        var isProductPage = /^\/(producto|subasta)\/[-a-z0-9]+/i.test(path);
+        var isOgRequest = crawlerPattern.test(navigator.userAgent);
+        
+        if (isProductPage && isOgRequest) {
+          var slug = path.split('/').pop();
+          var ogUrl = 'https://kemazon-og.cesars-pro.workers.dev/og' + path + '?utm_source=share';
+          window.location.replace(ogUrl);
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
