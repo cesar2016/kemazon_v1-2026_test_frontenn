@@ -163,9 +163,7 @@ export function ProductDetailPage() {
 
   const shareData = useMemo(() => {
     if (!product) return null;
-    const url = typeof window !== 'undefined'
-      ? buildPublicShareUrl(window.location.pathname)
-      : '';
+    const url = product?.slug ? getProductOgUrl(product.slug) : '';
     const imageUrl = product?.slug ? getProductImageUrl(product.slug) : (product.thumbnail || images?.[0] || '');
     return buildProductShareData(product, url, imageUrl);
   }, [images, product]);
@@ -229,7 +227,7 @@ export function ProductDetailPage() {
         <meta property="og:title" content={product?.name + ' | KEMAZON.ar'} />
         <meta property="og:description" content={shareData?.shareSummary || product?.description?.substring(0, 160) || 'Compra este producto en KEMAZON.ar'} />
         <meta property="og:image" content={product?.slug ? getProductImageUrl(product.slug) : (product?.thumbnail || images?.[0] || '')} />
-        <meta property="og:url" content={window.location.href} />
+        <meta property="og:url" content={product?.slug ? getProductOgUrl(product.slug) : window.location.href} />
         <meta property="og:type" content="product" />
       </Helmet>
       <Layout>

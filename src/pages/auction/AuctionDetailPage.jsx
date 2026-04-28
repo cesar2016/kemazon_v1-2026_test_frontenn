@@ -172,9 +172,7 @@ export function AuctionDetailPage() {
 
   const shareData = useMemo(() => {
     if (!product || !auction) return null;
-    const url = typeof window !== 'undefined'
-      ? buildPublicShareUrl(window.location.pathname)
-      : '';
+    const url = product?.slug ? getAuctionOgUrl(product.slug) : '';
     const imageUrl = product?.slug ? getProductImageUrl(product.slug) : (product.thumbnail || images?.[0] || '');
     return buildAuctionShareData(product, auction, url, imageUrl);
   }, [auction, images, product]);
@@ -340,7 +338,7 @@ export function AuctionDetailPage() {
         <meta property="og:title" content={(product?.name || 'Subasta') + ' | KEMAZON.ar'} />
         <meta property="og:description" content={shareData?.shareSummary || product?.description?.substring(0, 160) || 'Participa en esta subasta'} />
         <meta property="og:image" content={product?.slug ? getProductImageUrl(product.slug) : (product?.thumbnail || images?.[0] || '')} />
-        <meta property="og:url" content={window.location.href} />
+        <meta property="og:url" content={product?.slug ? getAuctionOgUrl(product.slug) : window.location.href} />
         <meta property="og:type" content="product" />
       </Helmet>
       <Layout>
