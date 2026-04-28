@@ -9,7 +9,7 @@ import {
   RotateCcw, CreditCard, Check, Clock, Heart,
   Eye, History, User, Sparkles, X
 } from 'lucide-react';
-import { auctionService, productService, getProductImageUrl } from '../../services/api';
+import { auctionService, productService, getProductImageUrl, getAuctionOgUrl } from '../../services/api';
 import { Layout } from '../../components/layout';
 import { Card, Badge, PriceFormatter, Spinner, Button, CountdownTimer, Modal } from '../../components/ui';
 import { LikersModal } from '../../components/product/LikersModal';

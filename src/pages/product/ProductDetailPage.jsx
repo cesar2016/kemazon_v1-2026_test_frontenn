@@ -8,7 +8,7 @@ import {
   ZoomIn, CreditCard, Package, Check, Trophy, Gavel,
   ArrowLeft, Info, MapPin, Zap
 } from 'lucide-react';
-import { productService, auctionService, getProductImageUrl } from '../../services/api';
+import { productService, auctionService, getProductImageUrl, getProductOgUrl } from '../../services/api';
 import { useCart } from '../../contexts/CartContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { Layout } from '../../components/layout';
