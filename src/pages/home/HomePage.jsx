@@ -1,5 +1,6 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Gavel, Shield, Truck, CreditCard, Zap, Clock, Users, TrendingUp, Store, Eye, Heart } from 'lucide-react';
+import { ArrowRight, Gavel, Shield, Truck, CreditCard, Zap, Clock, Users, TrendingUp, Store, Eye, Heart, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { productService, auctionService, categoryService } from '../../services/api';
 import { Layout } from '../../components/layout';
@@ -107,7 +108,102 @@ function ProductCard({ product }) {
   );
 }
 
-export function HomePage() {
+// Hero slides data
+const heroSlides = [
+  {
+    image: 'https://images.unsplash.com/photo-1556742049-0cf5a9e50d6d?w=1200&h=600&fit=crop',
+    title: 'Comprá desde tu casa',
+    subtitle: 'Miles de productos con entrega directa. Todo lo que necesitás, a un clic de distancia.',
+    cta: 'Ver Productos',
+    link: '/products',
+  },
+  {
+    image: 'https://images.unsplash.com/photo-1526367791219-8d8b1eeab40c?w=1200&h=600&fit=crop',
+    title: 'Vendé sin límites',
+    subtitle: 'Crea tu tienda y reachá a miles de compradores en todo el país.',
+    cta: 'Ser Vendedor',
+    link: '/become-seller',
+  },
+  {
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&h=600&fit=crop',
+    title: 'Rematá tus cosas',
+    subtitle: 'Subastas en tiempo real. El mejor precio lo ponés vos.',
+    cta: 'Ver Subastas',
+    link: '/auctions',
+  },
+];
+
+function HeroSlider() {
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const prevSlide = () => setCurrentSlide((currentSlide - 1 + heroSlides.length) % heroSlides.length);
+  const nextSlide = () => setCurrentSlide((currentSlide + 1) % heroSlides.length);
+
+  return (
+    <section className="relative h-[500px] md:h-[600px] overflow-hidden">
+      {heroSlides.map((slide, index) => (
+        <div
+          key={index}
+          className={`absolute inset-0 transition-opacity duration-700 ${index === currentSlide ? 'opacity-100' : 'opacity-0'}`}
+        >
+          <div className="absolute inset-0 bg-black/40 z-10" />
+          <img
+            src={slide.image}
+            alt={slide.title}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 z-20 flex items-center justify-center">
+            <div className="text-center max-w-3xl mx-auto px-4">
+              <h1 className="text-4xl md:text-6xl font-black text-white mb-4 drop-shadow-lg">
+                {slide.title}
+              </h1>
+              <p className="text-xl md:text-2xl text-white/90 mb-8 drop-shadow">
+                {slide.subtitle}
+              </p>
+              <Link to={slide.link} className="btn-primary inline-flex items-center text-lg px-8 py-4">
+                {slide.cta} <ArrowRight className="ml-2 w-5 h-5" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      ))}
+
+      {/* Navigation arrows */}
+      <button
+        onClick={prevSlide}
+        className="absolute left-4 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-white/20 hover:bg-white/40 backdrop-blur-sm transition-all"
+      >
+        <ChevronLeft className="w-6 h-6 text-white" />
+      </button>
+      <button
+        onClick={nextSlide}
+        className="absolute right-4 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-white/20 hover:bg-white/40 backdrop-blur-sm transition-all"
+      >
+        <ChevronRight className="w-6 h-6 text-white" />
+      </button>
+
+      {/* Dots */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 flex gap-2">
+        {heroSlides.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrentSlide(index)}
+            className={`w-3 h-3 rounded-full transition-all ${index === currentSlide ? 'bg-white scale-110' : 'bg-white/50'}`}
+          />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function HomePage() {
   const { data: productsData, isLoading: loadingProducts } = useQuery({
     queryKey: ['products', 'featured'],
     queryFn: () => productService.getAll({ per_page: 8 }),
@@ -129,33 +225,7 @@ export function HomePage() {
 
   return (
     <Layout>
-      <section className="relative bg-gradient-to-br from-primary-50 via-white to-secondary-50 py-20 overflow-hidden">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiMwMDAiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-50" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto">
-            <h1 className="text-5xl md:text-6xl font-bold mb-6">
-              Compra, Vende y{' '}
-              <span className="gradient-text flex items-center justify-center gap-2">
-                <Gavel className="w-8 h-8 md:w-10 md:h-10" />
-                REMATA
-              </span>{' '}
-              en KEMAZON
-            </h1>
-            <p className="text-xl text-gray-600 mb-8">
-              La plataforma de e-commerce multi-vendedor con las mejores ofertas del mercado argentino.
-              Desde compras directas hasta subastas en tiempo real.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link to="/products" className="btn-primary flex items-center">
-                Explorar Tienda <ArrowRight className="ml-2 w-5 h-5" />
-              </Link>
-              <Link to="/auctions" className="btn-outline flex items-center">
-                <Gavel className="mr-2 w-5 h-5" /> Ver Subastas
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
+      <HeroSlider />
 
       <div className="py-12 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -244,3 +314,5 @@ export function HomePage() {
     </Layout>
   );
 }
+
+export default HomePage;
