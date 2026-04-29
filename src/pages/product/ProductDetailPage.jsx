@@ -159,14 +159,6 @@ export function ProductDetailPage() {
     return prodImages;
   }, [product]);
 
-  const shareData = useMemo(() => {
-    if (!product) return null;
-    const url = typeof window !== 'undefined'
-      ? buildPublicShareUrl(window.location.pathname)
-      : '';
-    return buildProductShareData(product, url, product.thumbnail || images?.[0] || '');
-  }, [images, product]);
-
   const handleAddToCart = async () => {
     if (!isAuthenticated) {
       toast.error('Debes iniciar sesión para agregar al carrito');
