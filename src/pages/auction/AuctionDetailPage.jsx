@@ -399,15 +399,6 @@ export function AuctionDetailPage() {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        setIsShareOpen(true);
-                      }}
-                      className="p-4 rounded-3xl bg-white/80 text-gray-400 hover:text-primary-600 hover:bg-white transition-all duration-300 shadow-xl backdrop-blur-md"
-                    >
-                      <Share2 className="w-6 h-6 transition-transform hover:scale-125" />
-                    </button>
-<button
-                      onClick={(e) => {
-                        e.stopPropagation();
                         toggleLikeMutation.mutate(product?.id);
                       }}
                       className={`p-4 rounded-3xl transition-all duration-300 shadow-xl backdrop-blur-md ${

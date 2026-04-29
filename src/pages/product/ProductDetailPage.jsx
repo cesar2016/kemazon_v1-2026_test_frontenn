@@ -97,7 +97,6 @@ export function ProductDetailPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLikersModalOpen, setIsLikersModalOpen] = useState(false);
   const [isVisitorsModalOpen, setIsVisitorsModalOpen] = useState(false);
-  const [isShareOpen, setIsShareOpen] = useState(false);
   const [visitSessionId] = useState(() => Math.random().toString(36).substring(2, 15));
 
   // Queries
@@ -242,12 +241,6 @@ export function ProductDetailPage() {
             <ArrowLeft className="w-6 h-6" />
           </button>
           <span className="font-bold text-gray-900 truncate max-w-[180px]">{product.name}</span>
-          <button
-            onClick={() => setIsShareOpen(true)}
-            className="p-2 -mr-2 text-gray-700 hover:bg-gray-100 rounded-full transition-colors"
-          >
-            <Share2 className="w-6 h-6" />
-          </button>
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-12 w-full overflow-x-hidden">
@@ -302,15 +295,6 @@ export function ProductDetailPage() {
 
                   {/* Like Button on Image */}
                   <div className="absolute top-6 right-6 z-10 flex gap-2">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setIsShareOpen(true);
-                      }}
-                      className="p-4 rounded-3xl bg-white/80 text-gray-400 hover:text-primary-600 hover:bg-white transition-all duration-300 shadow-xl backdrop-blur-md sm:hidden"
-                    >
-                      <Share2 className="w-6 h-6 transition-transform hover:scale-125" />
-                    </button>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
