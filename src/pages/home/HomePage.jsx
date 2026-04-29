@@ -111,21 +111,21 @@ function ProductCard({ product }) {
 // Hero slides data
 const heroSlides = [
   {
-    image: 'https://images.unsplash.com/photo-1556742049-0cf5a9e50d6d?w=1200&h=600&fit=crop',
+    image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&h=600&fit=crop',
     title: 'Comprá desde tu casa',
     subtitle: 'Miles de productos con entrega directa. Todo lo que necesitás, a un clic de distancia.',
     cta: 'Ver Productos',
     link: '/products',
   },
   {
-    image: 'https://images.unsplash.com/photo-1526367791219-8d8b1eeab40c?w=1200&h=600&fit=crop',
+    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&h=600&fit=crop',
     title: 'Vendé sin límites',
     subtitle: 'Crea tu tienda y reachá a miles de compradores en todo el país.',
     cta: 'Ser Vendedor',
     link: '/become-seller',
   },
   {
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&h=600&fit=crop',
+    image: 'https://images.unsplash.com/photo-1607082349566-187342175e2f?w=1200&h=600&fit=crop',
     title: 'Rematá tus cosas',
     subtitle: 'Subastas en tiempo real. El mejor precio lo ponés vos.',
     cta: 'Ver Subastas',
