@@ -214,9 +214,9 @@ export function ProductDetailPage() {
     <>
       <Helmet>
         <title>{product?.name} | KEMAZON.ar</title>
-        <meta name="description" content={shareData?.shareSummary || product?.description?.substring(0, 160) || 'Compra este producto en KEMAZON.ar - La mejor plataforma de e-commerce de Argentina.'} />
+        <meta name="description" content={product?.description?.substring(0, 160) || 'Compra este producto en KEMAZON.ar - La mejor plataforma de e-commerce de Argentina.'} />
         <meta property="og:title" content={product?.name + ' | KEMAZON.ar'} />
-        <meta property="og:description" content={shareData?.shareSummary || product?.description?.substring(0, 160) || 'Compra este producto en KEMAZON.ar'} />
+        <meta property="og:description" content={product?.description?.substring(0, 160) || 'Compra este producto en KEMAZON.ar'} />
         <meta property="og:image" content={product?.thumbnail || images?.[0] || ''} />
         <meta property="og:url" content={window.location.href} />
         <meta property="og:type" content="product" />
@@ -625,12 +625,6 @@ export function ProductDetailPage() {
         isLoading={isLoadingVisitors}
         title="Visitantes del Producto"
         emptyMessage="Aún no hay visitas registradas."
-      />
-
-      <SocialShareModal
-        isOpen={isShareOpen}
-        onClose={() => setIsShareOpen(false)}
-        shareData={shareData}
       />
 
       {/* Persistent CTA Bar for Mobile */}
