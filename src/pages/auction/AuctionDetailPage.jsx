@@ -4,19 +4,17 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Helmet } from 'react-helmet-async';
 import {
   Gavel, Users, TrendingUp, Trophy, ChevronRight,
-  Target, Info, ArrowLeft, Share2, Star, Zap,
+  Target, Info, ArrowLeft, Star, Zap,
   ChevronLeft, ZoomIn, Package, Shield, Truck,
   RotateCcw, CreditCard, Check, Clock, Heart,
   Eye, History, User, Sparkles, X
 } from 'lucide-react';
-import { auctionService, productService, getProductImageUrl, getAuctionOgUrl } from '../../services/api';
+import { auctionService, productService, getProductImageUrl } from '../../services/api';
 import { Layout } from '../../components/layout';
 import { Card, Badge, PriceFormatter, Spinner, Button, CountdownTimer, Modal } from '../../components/ui';
 import { LikersModal } from '../../components/product/LikersModal';
-import { SocialShareModal } from '../../components/share/SocialShareModal';
 import { useAuth } from '../../contexts/AuthContext';
 import { useAuctionRealtime } from '../../hooks/useAuctionRealtime';
-import { buildAuctionShareData, buildPublicShareUrl } from '../../lib/share';
 import { toast } from 'sonner';
 
 /**
@@ -130,7 +128,6 @@ export function AuctionDetailPage() {
   const [isLikersModalOpen, setIsLikersModalOpen] = useState(false);
   const [isVisitorsModalOpen, setIsVisitorsModalOpen] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
-  const [isShareOpen, setIsShareOpen] = useState(false);
   const [visitSessionId] = useState(() => Math.random().toString(36).substring(2, 15));
   const [bidType, setBidType] = useState('manual');
 
@@ -169,13 +166,6 @@ export function AuctionDetailPage() {
       ? product.images
       : (product.thumbnail ? [product.thumbnail] : []);
   }, [product]);
-
-  const shareData = useMemo(() => {
-    if (!product || !auction) return null;
-    const url = product?.slug ? getAuctionOgUrl(product.slug) : '';
-    const imageUrl = product?.slug ? getProductImageUrl(product.slug) : (product.thumbnail || images?.[0] || '');
-    return buildAuctionShareData(product, auction, url, imageUrl);
-  }, [auction, images, product]);
 
   const placeBidMutation = useMutation({
     mutationFn: (amount) => auctionService.placeBid(auction?.id, amount),
@@ -334,11 +324,11 @@ export function AuctionDetailPage() {
     <>
       <Helmet>
         <title>{product?.name} | Subasta KEMAZON.ar</title>
-        <meta name="description" content={shareData?.shareSummary || product?.description?.substring(0, 160) || 'Participa en esta subasta en KEMAZON.ar - La mejor plataforma de subastas de Argentina.'} />
+        <meta name="description" content={product?.description?.substring(0, 160) || 'Participa en esta subasta en KEMAZON.ar - La mejor plataforma de subastas de Argentina.'} />
         <meta property="og:title" content={(product?.name || 'Subasta') + ' | KEMAZON.ar'} />
-        <meta property="og:description" content={shareData?.shareSummary || product?.description?.substring(0, 160) || 'Participa en esta subasta'} />
+        <meta property="og:description" content={product?.description?.substring(0, 160) || 'Participa en esta subasta'} />
         <meta property="og:image" content={product?.slug ? getProductImageUrl(product.slug) : (product?.thumbnail || images?.[0] || '')} />
-        <meta property="og:url" content={product?.slug ? getAuctionOgUrl(product.slug) : window.location.href} />
+        <meta property="og:url" content={window.location.href} />
         <meta property="og:type" content="product" />
       </Helmet>
       <Layout>
@@ -362,9 +352,6 @@ export function AuctionDetailPage() {
             <ArrowLeft className="w-6 h-6" />
           </button>
           <span className="font-bold text-gray-900 truncate max-w-[180px]">Subasta en Vivo</span>
-          <button onClick={() => setIsShareOpen(true)} className="p-2 -mr-2 text-gray-700 hover:bg-gray-100 rounded-full transition-colors">
-            <Share2 className="w-6 h-6" />
-          </button>
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-12 w-full overflow-x-hidden">
@@ -418,7 +405,7 @@ export function AuctionDetailPage() {
                     >
                       <Share2 className="w-6 h-6 transition-transform hover:scale-125" />
                     </button>
-                    <button
+<button
                       onClick={(e) => {
                         e.stopPropagation();
                         toggleLikeMutation.mutate(product?.id);
@@ -784,11 +771,6 @@ likers={likersData?.data?.likers || likersData?.likers || []}
         emptyMessage="Aún no hay visitas registradas."
       />
 
-      <SocialShareModal
-        isOpen={isShareOpen}
-        onClose={() => setIsShareOpen(false)}
-        shareData={shareData}
-      />
       </Layout>
     </>
   );

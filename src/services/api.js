@@ -280,12 +280,4 @@ export function getProductImageUrl(slugOrId) {
   return `${API_URL}/products/image/${slugOrId}`;
 }
 
-export function getProductOgUrl(slug) {
-  return `https://kemazon-og.cesars-pro.workers.dev/og/producto/${slug}`;
-}
-
-export function getAuctionOgUrl(slug) {
-  return `https://kemazon-og.cesars-pro.workers.dev/og/subasta/${slug}`;
-}
-
 export default api;

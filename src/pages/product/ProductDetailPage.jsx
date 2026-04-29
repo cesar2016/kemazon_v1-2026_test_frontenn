@@ -3,19 +3,17 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Helmet } from 'react-helmet-async';
 import {
-  Star, ShoppingCart, Heart, Eye, Share2, Truck, Shield,
-  RotateCcw, Minus, Plus, X, ChevronLeft, ChevronRight,
+  Star, ShoppingCart, Heart, Eye, Truck, Shield,
+  RotateCbw, Minus, Plus, X, ChevronLeft, ChevronRight,
   ZoomIn, CreditCard, Package, Check, Trophy, Gavel,
   ArrowLeft, Info, MapPin, Zap
 } from 'lucide-react';
-import { productService, auctionService, getProductImageUrl, getProductOgUrl } from '../../services/api';
+import { productService, auctionService, getProductImageUrl } from '../../services/api';
 import { useCart } from '../../contexts/CartContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { Layout } from '../../components/layout';
-import { Button, Card, Badge, PriceFormatter, Spinner, CountdownTimer, Modal } from '../../components/ui';
+import { Button, Card, Badge, PriceFormatter, Spinner, CountdownTimer } from '../../components/ui';
 import { LikersModal } from '../../components/product/LikersModal';
-import { SocialShareModal } from '../../components/share/SocialShareModal';
-import { buildProductShareData, buildPublicShareUrl } from '../../lib/share';
 import { toast } from 'sonner';
 
 /**
@@ -99,7 +97,6 @@ export function ProductDetailPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLikersModalOpen, setIsLikersModalOpen] = useState(false);
   const [isVisitorsModalOpen, setIsVisitorsModalOpen] = useState(false);
-  const [isShareOpen, setIsShareOpen] = useState(false);
   const [visitSessionId] = useState(() => Math.random().toString(36).substring(2, 15));
 
   // Queries
@@ -161,13 +158,6 @@ export function ProductDetailPage() {
     return prodImages;
   }, [product]);
 
-  const shareData = useMemo(() => {
-    if (!product) return null;
-    const url = product?.slug ? getProductOgUrl(product.slug) : '';
-    const imageUrl = product?.slug ? getProductImageUrl(product.slug) : (product.thumbnail || images?.[0] || '');
-    return buildProductShareData(product, url, imageUrl);
-  }, [images, product]);
-
   const handleAddToCart = async () => {
     if (!isAuthenticated) {
       toast.error('Debes iniciar sesión para agregar al carrito');
@@ -223,11 +213,11 @@ export function ProductDetailPage() {
     <>
       <Helmet>
         <title>{product?.name} | KEMAZON.ar</title>
-        <meta name="description" content={shareData?.shareSummary || product?.description?.substring(0, 160) || 'Compra este producto en KEMAZON.ar - La mejor plataforma de e-commerce de Argentina.'} />
+        <meta name="description" content={product?.description?.substring(0, 160) || 'Compra este producto en KEMAZON.ar - La mejor plataforma de e-commerce de Argentina.'} />
         <meta property="og:title" content={product?.name + ' | KEMAZON.ar'} />
-        <meta property="og:description" content={shareData?.shareSummary || product?.description?.substring(0, 160) || 'Compra este producto en KEMAZON.ar'} />
+        <meta property="og:description" content={product?.description?.substring(0, 160) || 'Compra este producto en KEMAZON.ar'} />
         <meta property="og:image" content={product?.slug ? getProductImageUrl(product.slug) : (product?.thumbnail || images?.[0] || '')} />
-        <meta property="og:url" content={product?.slug ? getProductOgUrl(product.slug) : window.location.href} />
+        <meta property="og:url" content={window.location.href} />
         <meta property="og:type" content="product" />
       </Helmet>
       <Layout>
@@ -251,11 +241,6 @@ export function ProductDetailPage() {
             <ArrowLeft className="w-6 h-6" />
           </button>
           <span className="font-bold text-gray-900 truncate max-w-[180px]">{product.name}</span>
-          <button
-            onClick={() => setIsShareOpen(true)}
-            className="p-2 -mr-2 text-gray-700 hover:bg-gray-100 rounded-full transition-colors"
-          >
-            <Share2 className="w-6 h-6" />
           </button>
         </div>
 
@@ -320,7 +305,7 @@ export function ProductDetailPage() {
                     >
                       <Share2 className="w-6 h-6 transition-transform hover:scale-125" />
                     </button>
-                    <button
+<button
                       onClick={(e) => {
                         e.stopPropagation();
                         toggleLikeMutation.mutate(product.id);
@@ -634,12 +619,6 @@ export function ProductDetailPage() {
         isLoading={isLoadingVisitors}
         title="Visitantes del Producto"
         emptyMessage="Aún no hay visitas registradas."
-      />
-
-      <SocialShareModal
-        isOpen={isShareOpen}
-        onClose={() => setIsShareOpen(false)}
-        shareData={shareData}
       />
 
       {/* Persistent CTA Bar for Mobile */}
