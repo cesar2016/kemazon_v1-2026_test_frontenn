@@ -12,7 +12,6 @@ import { AuctionsPage } from './pages/auction/AuctionsPage';
 import { AuctionDetailPage } from './pages/auction/AuctionDetailPage';
 import { SellerDashboard } from './pages/seller/SellerDashboard';
 import { ProductFormPage } from './pages/seller/ProductFormPage';
-import { AuctionFormPage } from './pages/seller/AuctionFormPage';
 import { MyProductsPage } from './pages/seller/MyProductsPage';
 import { SellerOrdersPage } from './pages/seller/SellerOrdersPage';
 import { BecomeSellerPage } from './pages/seller/BecomeSellerPage';
