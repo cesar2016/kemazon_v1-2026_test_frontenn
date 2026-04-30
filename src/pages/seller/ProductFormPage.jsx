@@ -398,6 +398,7 @@ export function ProductFormPage() {
           <Card className="p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Precio y Stock</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {form.type !== "auction" && (
               <div>
                 <label className="label">Precio de Venta (ARS) *</label>
                 <Input
