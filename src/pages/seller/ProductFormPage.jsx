@@ -70,6 +70,7 @@ export function ProductFormPage() {
       }
 
       if (product.auction) {
+        setForm(prev => ({ ...prev, type: "auction" }));
         setAuctionSettings({
           starting_price: product.auction.starting_price || '',
           reserve_price: product.auction.reserve_price || '',
