@@ -59,7 +59,7 @@ export function ProductFormPage() {
         specifications: product.specifications || '',
         is_active: product.is_active ?? true,
       });
-      
+
       if (product.images && product.images.length > 0) {
         const thumbnailUrl = product.thumbnail || product.images[0];
         setImages(product.images.map((url) => ({
@@ -87,7 +87,7 @@ export function ProductFormPage() {
     if (form.type === 'auction') {
       const now = new Date();
       const in5Days = new Date(now.getTime() + 5 * 24 * 60 * 60 * 1000);
-      
+
       const formatDate = (date) => {
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -137,7 +137,7 @@ export function ProductFormPage() {
       if (!auctionSettings.starting_price || parseFloat(auctionSettings.starting_price) <= 0) {
         newErrors.auction_starting_price = 'El precio base es requerido para subastas';
       }
-      
+
       if (!form.price || parseFloat(form.price) <= 0) {
         newErrors.price = 'El precio es requerido para subastas';
       }
@@ -194,7 +194,7 @@ export function ProductFormPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       toast.error('Por favor, corrige los errores en el formulario');
       return;
@@ -206,9 +206,9 @@ export function ProductFormPage() {
 
     try {
       const imageUrls = images.filter(img => img.isExisting || !img.url.startsWith('data:')).map(img => img.url);
-      const thumbnail = images.find(img => img.isPrimary)?.url || 
-                      images.find(img => img.isExisting && !img.url.startsWith('data:'))?.url || 
-                      images[0]?.url;
+      const thumbnail = images.find(img => img.isPrimary)?.url ||
+        images.find(img => img.isExisting && !img.url.startsWith('data:'))?.url ||
+        images[0]?.url;
 
       const productData = {
         name: form.name.trim(),
@@ -220,7 +220,7 @@ export function ProductFormPage() {
         specifications: form.specifications,
         is_active: form.is_active,
       };
-      
+
       if (form.type === 'direct') {
         productData.price = parseFloat(form.price);
         productData.stock = parseInt(form.stock) || 0;
@@ -280,7 +280,7 @@ export function ProductFormPage() {
 
       navigate('/seller/dashboard');
     } catch (error) {
-      const message = error.response?.data?.errors 
+      const message = error.response?.data?.errors
         ? Object.values(error.response.data.errors).flat().join(', ')
         : error.response?.data?.message || 'Error al guardar';
       toast.error(message);
@@ -381,9 +381,9 @@ export function ProductFormPage() {
 
           <Card className="p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Imágenes *</h2>
-            <ImageUpload 
-              images={images} 
-              setImages={setImages} 
+            <ImageUpload
+              images={images}
+              setImages={setImages}
               maxImages={6}
             />
             {errors.images && (
@@ -539,7 +539,7 @@ export function ProductFormPage() {
       </div>
       <Modal
         isOpen={loading}
-        onClose={() => {}}
+        onClose={() => { }}
         title={isEditing ? 'Actualizando producto' : 'Creando producto'}
         size="sm"
         closeOnBackdrop={false}
