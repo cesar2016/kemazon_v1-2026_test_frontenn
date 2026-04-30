@@ -58,7 +58,6 @@ function App() {
               <Route path="/seller/products" element={<ProtectedRoute><MyProductsPage /></ProtectedRoute>} />
               <Route path="/seller/products/create" element={<ProtectedRoute><ProductFormPage /></ProtectedRoute>} />
               <Route path="/seller/products/:id" element={<ProtectedRoute><ProductFormPage /></ProtectedRoute>} />
-              <Route path="/seller/auctions/create" element={<ProtectedRoute><AuctionFormPage /></ProtectedRoute>} />
               <Route path="/seller/orders" element={<ProtectedRoute><SellerOrdersPage /></ProtectedRoute>} />
 
               {/* Admin Routes */}
