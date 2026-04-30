@@ -135,6 +135,13 @@ export function ProductFormPage() {
       if (!auctionSettings.starting_price || parseFloat(auctionSettings.starting_price) <= 0) {
         newErrors.auction_starting_price = 'El precio base es requerido para subastas';
       }
+      
+      if (!form.price || parseFloat(form.price) <= 0) {
+        newErrors.price = 'El precio es requerido para subastas';
+      }
+      if (!form.stock || parseInt(form.stock) <= 0) {
+        newErrors.stock = 'El stock es requerido para subastas';
+      }
 
       if (!auctionSettings.starts_at) {
         newErrors.starts_at = 'La fecha de inicio es requerida';
@@ -203,14 +210,20 @@ export function ProductFormPage() {
         name: form.name.trim(),
         description: form.description.trim(),
         category_id: form.category_id || null,
-        price: parseFloat(form.price),
-        stock: parseInt(form.stock),
         type: form.type,
         images: imageUrls,
         thumbnail: thumbnail,
         specifications: form.specifications,
         is_active: form.is_active,
       };
+      
+      if (form.type === 'direct') {
+        productData.price = parseFloat(form.price);
+        productData.stock = parseInt(form.stock) || 0;
+      } else {
+        productData.price = 0;
+        productData.stock = 0;
+      }
 
       console.log('[ProductFormPage] Submitting product data:', {
         ...productData,
@@ -376,46 +389,42 @@ export function ProductFormPage() {
           <Card className="p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Precio y Stock</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {form.type !== 'auction' && (
-                <div>
-                  <label className="label">Precio de Venta (ARS) *</label>
-                  <Input
-                    type="number"
-                    name="price"
-                    value={form.price}
-                    onChange={handleChange}
-                    placeholder="0.00"
-                    min="0"
-                    step="0.01"
-                    error={errors.price}
-                  />
-                  {errors.price && (
-                    <p className="mt-1 text-sm text-red-500 flex items-center">
-                      <AlertCircle className="w-4 h-4 mr-1" /> {errors.price}
-                    </p>
-                  )}
-                </div>
-              )}
+              <div>
+                <label className="label">Precio de Venta (ARS) *</label>
+                <Input
+                  type="number"
+                  name="price"
+                  value={form.price}
+                  onChange={handleChange}
+                  placeholder="0.00"
+                  min="0"
+                  step="0.01"
+                  error={errors.price}
+                />
+                {errors.price && (
+                  <p className="mt-1 text-sm text-red-500 flex items-center">
+                    <AlertCircle className="w-4 h-4 mr-1" /> {errors.price}
+                  </p>
+                )}
+              </div>
 
-              {form.type !== 'auction' && (
-                <div>
-                  <label className="label">Stock *</label>
-                  <Input
-                    type="number"
-                    name="stock"
-                    value={form.stock}
-                    onChange={handleChange}
-                    placeholder="0"
-                    min="0"
-                    error={errors.stock}
-                  />
-                  {errors.stock && (
-                    <p className="mt-1 text-sm text-red-500 flex items-center">
-                      <AlertCircle className="w-4 h-4 mr-1" /> {errors.stock}
-                    </p>
-                  )}
-                </div>
-              )}
+              <div>
+                <label className="label">Stock *</label>
+                <Input
+                  type="number"
+                  name="stock"
+                  value={form.stock}
+                  onChange={handleChange}
+                  placeholder="0"
+                  min="0"
+                  error={errors.stock}
+                />
+                {errors.stock && (
+                  <p className="mt-1 text-sm text-red-500 flex items-center">
+                    <AlertCircle className="w-4 h-4 mr-1" /> {errors.stock}
+                  </p>
+                )}
+              </div>
             </div>
           </Card>
 
