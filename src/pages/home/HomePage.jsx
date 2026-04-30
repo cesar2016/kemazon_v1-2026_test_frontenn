@@ -111,21 +111,21 @@ function ProductCard({ product }) {
 // Hero slides data
 const heroSlides = [
   {
-    image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&h=600&fit=crop',
+    image: 'https://img.freepik.com/foto-gratis/joven-mostrando-pantalla-portatil-firmar-bien-aprobar-o-como-promo-internet-sonriendo-satisfecho-pie-sobre-fondo-azul_1258-66497.jpg',
     title: 'Comprá desde tu casa',
     subtitle: 'Miles de productos con entrega directa. Todo lo que necesitás, a un clic de distancia.',
     cta: 'Ver Productos',
     link: '/products',
   },
   {
-    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&h=600&fit=crop',
+    image: 'https://thumbs.dreamstime.com/b/compras-felices-de-la-mujer-para-los-zapatos-88282325.jpg',
     title: 'Vendé sin límites',
     subtitle: 'Crea tu tienda y reachá a miles de compradores en todo el país.',
     cta: 'Ser Vendedor',
     link: '/become-seller',
   },
   {
-    image: 'https://images.unsplash.com/photo-1607082349566-187342175e2f?w=1200&h=600&fit=crop',
+    image: 'https://la100.cienradios.com/resizer/v2/XIVQPUGM2RAQNOMJ4J5TMVXACM.jpg?auth=dd1d5870f31496138f03ddd8e2980e459527c2ff3afbfe5ad5d6f534c1749a9f&width=800&height=400',
     title: 'Rematá tus cosas',
     subtitle: 'Subastas en tiempo real. El mejor precio lo ponés vos.',
     cta: 'Ver Subastas',
@@ -147,7 +147,7 @@ function HeroSlider() {
   const nextSlide = () => setCurrentSlide((currentSlide + 1) % heroSlides.length);
 
   return (
-    <section className="relative h-[500px] md:h-[600px] overflow-hidden">
+    <div className="relative w-full max-w-[1353px] mx-auto overflow-hidden" style={{ height: '355px' }}>
       {heroSlides.map((slide, index) => (
         <div
           key={index}
@@ -199,7 +199,7 @@ function HeroSlider() {
           />
         ))}
       </div>
-    </section>
+    </div>
   );
 }
 

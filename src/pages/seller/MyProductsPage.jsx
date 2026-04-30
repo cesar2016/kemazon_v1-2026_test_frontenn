@@ -33,8 +33,9 @@ function ProductRow({ product }) {
   const isAuction = product.type === 'auction';
   const auction = product.auction;
   const hasActiveBids = auction && auction.bids?.length > 0;
-  const isAuctionActive = auction && auction.is_active;
-  const canEdit = !isAuction || (!isAuctionActive && !hasActiveBids);
+  const isAuctionActive = auction && auction.is_active && auction.status === 'active';
+  const auctionEnded = auction && auction.status === 'ended';
+  const canEdit = !isAuction || (!isAuctionActive && !hasActiveBids) || auctionEnded;
 
   const displayPrice = isAuction ? auction?.starting_price : product.price;
 
@@ -102,7 +103,7 @@ function ProductRow({ product }) {
             </div>
           ) : (
             <span className="text-xs text-gray-400 italic">
-              {hasActiveBids ? 'En remate' : 'Subasta activa'}
+              {hasActiveBids ? 'En remate' : auctionEnded ? 'Finalizada' : 'Subasta activa'}
             </span>
           )}
         </td>
