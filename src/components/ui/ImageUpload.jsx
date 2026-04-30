@@ -54,6 +54,7 @@ export function ImageUpload({ images, setImages, maxImages = 6 }) {
           url: resizedUrl,
           file: file,
           isPrimary: prev.length === 0,
+          isExisting: false,
         }
       ]);
     }

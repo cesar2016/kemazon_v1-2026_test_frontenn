@@ -65,6 +65,7 @@ export function ProductFormPage() {
         setImages(product.images.map((url) => ({
           url,
           isPrimary: url === thumbnailUrl,
+          isExisting: true,
         })));
       }
 
@@ -196,21 +197,29 @@ export function ProductFormPage() {
     setUploadStage(isEditing ? 'Actualizando producto...' : 'Creando producto...');
 
     try {
-      const imageUrls = images.map(img => img.url);
-      const thumbnail = images.find(img => img.isPrimary)?.url || images[0]?.url;
+      const imageUrls = images.filter(img => img.isExisting || !img.url.startsWith('data:')).map(img => img.url);
+      const thumbnail = images.find(img => img.isPrimary)?.url || 
+                      images.find(img => img.isExisting && !img.url.startsWith('data:'))?.url || 
+                      images[0]?.url;
 
       const productData = {
         name: form.name.trim(),
         description: form.description.trim(),
         category_id: form.category_id || null,
         price: form.type === 'auction' ? 0 : parseFloat(form.price),
-        stock: form.type === 'auction' ? 0 : (parseInt(form.stock) || 0),
+        stock: form.type === 'auction' ? 1 : (parseInt(form.stock) || 0),
         type: form.type,
         images: imageUrls.filter(url => !url.startsWith('data:')),
         thumbnail: thumbnail && !thumbnail.startsWith('data:') ? thumbnail : (imageUrls.find(url => !url.startsWith('data:')) || ''),
         specifications: form.specifications,
         is_active: form.is_active,
       };
+
+      console.log('[ProductFormPage] Submitting product data:', {
+        ...productData,
+        images: `${productData.images.length} images`,
+        thumbnail: productData.thumbnail,
+      });
 
       console.log('[ProductFormPage] Submitting product data:', {
         ...productData,
