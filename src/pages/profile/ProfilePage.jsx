@@ -74,7 +74,11 @@ function ProfileInfo({ user, onUpdate }) {
   const handleAvatarChange = (e) => {
     const file = e.target.files?.[0];
     if (file) {
-      avatarMutation.mutate(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        avatarMutation.mutate(reader.result);
+      };
+      reader.readAsDataURL(file);
     }
   };
 

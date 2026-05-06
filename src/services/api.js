@@ -182,9 +182,7 @@ export const authService = {
   me: () => api.get('/auth/me'),
   updateProfile: (data) => api.put('/auth/profile', data),
   becomeSeller: (data) => api.post('/auth/become-seller', data),
-  updateAvatar: (data) => api.post('/auth/avatar', data, {
-    headers: { 'Content-Type': 'multipart/form-data' }
-  }),
+  updateAvatar: (data) => api.post('/auth/avatar', { avatar: data }),
   changePassword: (data) => api.post('/auth/change-password', data),
 };
 
